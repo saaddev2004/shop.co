@@ -5,8 +5,6 @@ import Header from "../../components/header/header";
 import HeroSection from "../../components/hero/HeroSection";
 import BrandStrip from "../../components/BrandStrip/BrandStrip";
 import NewArrivals from "../../components/NewArrivals/NewArrivals";
-import TopSelling from "../../components/TopSelling/TopSelling";
-import OnSale from "../../components/OnSale/OnSale";
 import Testimonials from "../../components/Testimonials/Testimonials";
 import NewsLetter from "../../components/Newsletter/Newsletter";
 import Footer from "../../components/Footer/Footer";
@@ -23,14 +21,6 @@ function HomePage() {
 
       <div id="New-Arrivals">
         <NewArrivals />
-      </div>
-
-      <div id="top-selling">
-        <TopSelling />
-      </div>
-
-      <div id="on-sale">
-        <OnSale />
       </div>
 
       <Testimonials />

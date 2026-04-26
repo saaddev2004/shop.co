@@ -15,6 +15,7 @@ import GraphicShirt from './pages/Graphic-Shirt-page/Graphic-Shirt-page';
 import PoloShirt from './pages/Polo-T-Shirt-page/Polo-T-Shirt-page';
 import Checkout from './pages/Checkout-page/Checkout-page';
 import CartPage from './pages/CartPage/CartPage';  
+import ShopPage from './pages/ShopPage/ShopPage';
 
 import { CartProvider } from './Context/CartContext';
 
@@ -38,6 +39,7 @@ function App() {
           <Route path="/polo-tshirt-details" element={<PoloShirt />} />
           <Route path="/add-to-cart-page" element={<CartPage />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/shop" element={<ShopPage />} />
         </Routes>
       </Router>
     </CartProvider>
