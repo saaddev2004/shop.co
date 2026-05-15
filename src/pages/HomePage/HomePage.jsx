@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-import Header from "../../components/header/header";
+
 import HeroSection from "../../components/hero/HeroSection";
 import BrandStrip from "../../components/BrandStrip/BrandStrip";
 import NewArrivals from "../../components/NewArrivals/NewArrivals";
+import SaleSection from "../../components/SaleSection/SaleSection";
 import Testimonials from "../../components/Testimonials/Testimonials";
-import NewsLetter from "../../components/Newsletter/Newsletter";
-import Footer from "../../components/Footer/Footer";
+
 
 function HomePage() {
   const location = useLocation();
@@ -15,7 +15,7 @@ function HomePage() {
 
   return (
     <div>
-      <Header />
+
       <HeroSection />
       <BrandStrip />
 
@@ -23,9 +23,10 @@ function HomePage() {
         <NewArrivals />
       </div>
 
+      <SaleSection />
+
       <Testimonials />
-      <NewsLetter />
-      <Footer />
+
     </div>
   );
 }

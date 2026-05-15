@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --primary: #000000;
@@ -14,12 +14,19 @@ body {
   margin: 0;
   font-family: 'Plus Jakarta Sans', sans-serif;
   @apply antialiased text-black bg-white dark:bg-neutral-900 dark:text-white transition-colors duration-500;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', sans-serif;
-  @apply font-bold tracking-tight capitalize;
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  @apply tracking-tight;
+  text-transform: none; /* Remove automatic capitalization */
 }
+
+h1 { @apply font-extrabold; }
+h2 { @apply font-bold; }
+h3 { @apply font-semibold; }
 
 .glass {
   @apply bg-white/70 backdrop-blur-md border border-white/20;
@@ -27,13 +34,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-secondary;
+  @apply bg-secondary/50;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-black/20 rounded-full hover:bg-black/40;
+  @apply bg-black/10 rounded-full hover:bg-black/20;
 }

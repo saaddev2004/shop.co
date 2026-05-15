@@ -25,6 +25,9 @@ export const CartProvider = ({ children }) => {
 
   // add or merge (same id + same options)
   const addToCart = (product) => {
+    // Strip large image data to save localStorage quota
+    const { image, allImages, ...slimProduct } = product;
+    
     setItems((prev) => {
       const idx = prev.findIndex(
         (p) =>
@@ -41,7 +44,7 @@ export const CartProvider = ({ children }) => {
         };
         return copy;
       }
-      return [...prev, { ...product, quantity: product.quantity || 1 }];
+      return [...prev, { ...slimProduct, quantity: product.quantity || 1 }];
     });
   };
 

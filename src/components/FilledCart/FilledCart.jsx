@@ -2,9 +2,24 @@ import React, { useContext } from "react";
 import { CartContext } from "../../Context/CartContext";
 import { FaTrash, FaPlus, FaMinus, FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";   
+import { useProducts } from "../../Context/ProductContext";
 
 const FilledCart = () => {
   const { items, removeFromCart, updateQty } = useContext(CartContext);
+  const { products } = useProducts();
+
+  const getItemImage = (item) => {
+    const product = products.find(p => p.id === item.id);
+    if (!product) return "";
+    
+    if (product.allImages && item.selectedColor) {
+        const colorImg = product.allImages.find(img => 
+            typeof img === 'object' ? img.color === item.selectedColor : false
+        );
+        if (colorImg) return colorImg.url;
+    }
+    return product.image || "";
+  };
 
   const subtotal = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
   const discount = items.length > 0 ? subtotal * 0.2 : 0; // 20% discount as suggested in promo
@@ -41,7 +56,7 @@ const FilledCart = () => {
                 >
                   <div className="w-24 h-24 md:w-32 md:h-32 bg-[#F0EEED] dark:bg-neutral-800 rounded-[15px] flex-shrink-0 flex items-center justify-center p-2">
                     <img
-                      src={item.image}
+                      src={getItemImage(item)}
                       alt={item.name}
                       className="w-full h-full object-contain"
                     />
@@ -66,7 +81,7 @@ const FilledCart = () => {
                     </div>
 
                     <div className="flex justify-between items-end">
-                      <span className="text-xl md:text-2xl font-bold dark:text-white">${item.price}</span>
+                      <span className="text-xl md:text-2xl font-bold dark:text-white">Rs. {item.price}</span>
                       <div className="flex items-center bg-[#F0F0F0] dark:bg-neutral-800 rounded-full px-3 md:px-4 py-2 gap-4 md:gap-6">
                         <button 
                           onClick={() => updateQty(index, item.quantity - 1)}
@@ -99,21 +114,21 @@ const FilledCart = () => {
             <div className="flex flex-col gap-4 border-b border-black/10 dark:border-white/10 pb-6">
               <div className="flex justify-between text-black/60 dark:text-white/60 text-lg">
                 <span>Subtotal</span>
-                <span className="font-bold text-black dark:text-white">${subtotal}</span>
+                <span className="font-bold text-black dark:text-white">Rs. {subtotal}</span>
               </div>
               <div className="flex justify-between text-black/60 dark:text-white/60 text-lg">
                 <span>Discount (20%)</span>
-                <span className="font-bold text-red-500">-${discount}</span>
+                <span className="font-bold text-red-500">-Rs. {discount}</span>
               </div>
               <div className="flex justify-between text-black/60 dark:text-white/60 text-lg">
                 <span>Delivery Fee</span>
-                <span className="font-bold text-black dark:text-white">${deliveryFee}</span>
+                <span className="font-bold text-black dark:text-white">Rs. {deliveryFee}</span>
               </div>
             </div>
 
             <div className="flex justify-between text-xl md:text-2xl font-bold">
               <span className="dark:text-white">Total</span>
-              <span className="dark:text-white">${total}</span>
+              <span className="dark:text-white">Rs. {total}</span>
             </div>
 
             <div className="flex gap-3">

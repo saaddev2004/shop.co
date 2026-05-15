@@ -3,15 +3,18 @@ import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Link } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
 
-import { productsData, categories } from "../../data/products";
+import { useProducts } from "../../Context/ProductContext";
+import { categories } from "../../data/products";
+import ProductCard from "../ProductCard/ProductCard";
 
 const NewArrivals = () => {
-  const displayCategories = categories.filter(c => c !== "All");
-  const [activeCategory, setActiveCategory] = useState(displayCategories[0]);
+  const { products } = useProducts();
+  const [activeCategory, setActiveCategory] = useState("All");
 
-  const filteredProducts = productsData.filter(p => p.category === activeCategory);
+  const filteredProducts = activeCategory === "All" 
+    ? products.slice(0, 8) // Show latest 8 products for "All"
+    : products.filter(p => p.category === activeCategory);
 
   return (
     <motion.section 
@@ -28,7 +31,7 @@ const NewArrivals = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-2xl md:text-4xl font-extrabold text-center mb-8 font-heading dark:text-white tracking-tight"
+          className="text-2xl md:text-4xl font-bold text-center mb-8 font-heading dark:text-white tracking-tight"
         >
           New Arrivals
         </motion.h2>
@@ -41,7 +44,7 @@ const NewArrivals = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-wrap justify-center gap-2 md:gap-4 mb-10"
         >
-          {displayCategories.map((cat) => (
+          {categories.map((cat) => (
              <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
@@ -56,60 +59,28 @@ const NewArrivals = () => {
           ))}
         </motion.div>
         
-        <Swiper
-          slidesPerView={1.2}
-          spaceBetween={16}
-          breakpoints={{
-            640: { slidesPerView: 2.2, spaceBetween: 20 },
-            1024: { slidesPerView: 3.2, spaceBetween: 24 },
-            1280: { slidesPerView: 4, spaceBetween: 24 },
-          }}
-          className="pb-12"
-        >
-          {filteredProducts.map((item) => (
-            <SwiperSlide key={item.id}>
-              <div className="group h-full flex flex-col">
-                <Link to={item.link} className="aspect-[3/4] rounded-[20px] overflow-hidden bg-[#F0EEED] dark:bg-neutral-800 flex items-center justify-center mb-4 transition-all group-hover:shadow-lg">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
-                  />
-                </Link>
-                
-                <div className="flex flex-col flex-grow">
-                  <h3 className="text-lg md:text-xl font-bold mb-2 dark:text-white line-clamp-1">
-                    {item.name}
-                  </h3>
-                  
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex gap-0.5 text-yellow-400">
-                      {[...Array(Math.floor(item.rating))].map((_, i) => (
-                        <FaStar key={i} size={18} />
-                      ))}
-                      {item.rating % 1 !== 0 && <FaStar size={18} className="opacity-50" />}
-                    </div>
-                    <span className="text-sm dark:text-gray-400">
-                      {item.rating}/<span className="text-gray-400">5</span>
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl font-bold dark:text-white">${item.price}</span>
-                    {item.oldPrice && (
-                      <>
-                        <span className="text-2xl font-bold text-black/30 dark:text-white/30 line-through">${item.oldPrice}</span>
-                        <span className="bg-[#FF3333]/10 text-[#FF3333] px-3 py-1 rounded-full text-xs font-bold">
-                          {item.discount}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        {filteredProducts.length > 0 ? (
+          <Swiper
+            slidesPerView={1.2}
+            spaceBetween={16}
+            breakpoints={{
+              640: { slidesPerView: 2.2, spaceBetween: 20 },
+              1024: { slidesPerView: 3.2, spaceBetween: 24 },
+              1280: { slidesPerView: 4, spaceBetween: 24 },
+            }}
+            className="pb-12"
+          >
+            {filteredProducts.map((item) => (
+              <SwiperSlide key={item.id}>
+                <ProductCard item={item} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <div className="py-20 text-center text-black/40 dark:text-white/40 italic">
+            No products in this category yet.
+          </div>
+        )}
 
         <div className="flex justify-center mt-8">
           <Link 

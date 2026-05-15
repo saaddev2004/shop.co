@@ -30,7 +30,7 @@ const BrowseByCategory = () => {
   return (
     <section className="py-12 md:py-20 px-4">
       <div className="container mx-auto bg-[#F0EEED] dark:bg-neutral-900 rounded-[40px] px-8 py-16 md:px-16 md:py-20 transition-colors duration-500 shadow-sm border border-black/5 dark:border-white/5">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -38,8 +38,8 @@ const BrowseByCategory = () => {
         >
           BROWSE BY CATEGORY
         </motion.h2>
-        
-        <motion.div 
+
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -48,8 +48,8 @@ const BrowseByCategory = () => {
         >
           {categories.map((cat, index) => (
             <motion.div variants={itemVariants} key={index} className="h-[250px] md:h-[289px]">
-              <Link 
-                to={`/shop`} 
+              <Link
+                to={`/shop`}
                 // We're using state to pass category to Shop page if we used React Router state, 
                 // but for simplicity it links to the shop and user can select tab.
                 className="group relative block w-full h-full rounded-[20px] overflow-hidden bg-white dark:bg-neutral-800 shadow-sm transition-all hover:shadow-xl"
@@ -59,10 +59,10 @@ const BrowseByCategory = () => {
                     {cat.name}
                   </h3>
                 </div>
-                <img 
-                  src={cat.image} 
-                  alt={cat.name} 
-                  className="absolute bottom-0 right-0 w-3/4 max-h-[80%] object-contain group-hover:scale-110 group-hover:-translate-x-2 group-hover:-translate-y-2 transition-transform duration-500" 
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  className="absolute bottom-0 right-0 w-3/4 max-h-[80%] object-contain group-hover:scale-110 group-hover:-translate-x-2 group-hover:-translate-y-2 transition-transform duration-500"
                 />
               </Link>
             </motion.div>
