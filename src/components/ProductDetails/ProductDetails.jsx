@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import { CartContext } from "../../Context/CartContext";
-import { FaStar, FaCheck, FaPlus, FaMinus } from "react-icons/fa";
+import { FaCheck, FaPlus, FaMinus } from "react-icons/fa";
 
 const ProductDetails = ({ productData }) => {
-  const { id, name, price, image, rating = 4.5, description, colors: dynamicColors, allImages, colorStock } = productData;
+  const { id, name, price, image, description, colors: dynamicColors, allImages, colorStock } = productData;
   
   // Normalize allImages to {url, color} format
   const normalizedImages = (allImages || [image]).map(img => 

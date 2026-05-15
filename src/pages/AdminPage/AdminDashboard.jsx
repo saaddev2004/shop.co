@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useRef } from "react";
 import { useProducts } from "../../Context/ProductContext";
 import { categories } from "../../data/products";
-import { FiUpload, FiPlus, FiX, FiCheckCircle, FiMinus, FiMaximize, FiTrash2, FiShoppingBag, FiAlertTriangle, FiEdit3, FiArrowLeft, FiGrid, FiList, FiPieChart, FiTrendingUp, FiSave, FiArrowRight, FiBox, FiPercent } from "react-icons/fi";
+import { FiUpload, FiPlus, FiX, FiCheckCircle, FiMinus, FiMaximize, FiTrash2, FiShoppingBag, FiAlertTriangle, FiEdit3, FiArrowLeft, FiGrid, FiList, FiSave, FiArrowRight, FiBox, FiPercent } from "react-icons/fi";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "../../utils/cropImage";
 import { motion, AnimatePresence } from "framer-motion";

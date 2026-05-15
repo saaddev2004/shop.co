@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React from "react";
+
 
 
 import HeroSection from "../../components/hero/HeroSection";
@@ -10,7 +10,6 @@ import Testimonials from "../../components/Testimonials/Testimonials";
 
 
 function HomePage() {
-  const location = useLocation();
 
 
   return (

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { CartContext } from "../../Context/CartContext";
 import { FaTrash, FaPlus, FaMinus, FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";   
