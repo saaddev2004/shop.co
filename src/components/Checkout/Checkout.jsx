@@ -1,7 +1,34 @@
-import React from "react";
+import React, { useEffect, useContext, useRef } from "react";
 import { Link } from "react-router-dom"; 
+import { CartContext } from "../../Context/CartContext";
+import { useOrders } from "../../Context/OrderContext";
+import { useUser } from "../../Context/UserContext";
 
 const ThankYou = () => {
+  const { items, clearCart } = useContext(CartContext);
+  const { addOrder } = useOrders();
+  const { currentUser } = useUser();
+  const orderProcessed = useRef(false);
+
+  useEffect(() => {
+    if (items.length > 0 && !orderProcessed.current) {
+      orderProcessed.current = true;
+      const subtotal = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+      const discount = subtotal * 0.2;
+      const deliveryFee = 15;
+      const total = subtotal - discount + deliveryFee;
+      
+      addOrder({
+        customer: currentUser ? currentUser.name : "Guest Customer",
+        email: currentUser ? currentUser.email : "guest@shop.co",
+        cart: items,
+        total: total,
+      });
+      
+      clearCart();
+    }
+  }, [items, addOrder, clearCart]);
+
   return (
     <div className="min-h-[70vh] flex flex-col lg:flex-row items-center justify-between container mx-auto px-4 py-12 gap-12 transition-colors duration-500">
       

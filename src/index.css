@@ -18,15 +18,30 @@ body {
   letter-spacing: -0.01em;
 }
 
-h1, h2, h3, h4, h5, h6, .font-heading {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
   font-family: 'Plus Jakarta Sans', sans-serif;
   @apply tracking-tight;
-  text-transform: none; /* Remove automatic capitalization */
+  text-transform: none;
+  /* Remove automatic capitalization */
 }
 
-h1 { @apply font-extrabold; }
-h2 { @apply font-bold; }
-h3 { @apply font-semibold; }
+h1 {
+  @apply font-extrabold;
+}
+
+h2 {
+  @apply font-bold;
+}
+
+h3 {
+  @apply font-semibold;
+}
 
 .glass {
   @apply bg-white/70 backdrop-blur-md border border-white/20;
@@ -34,13 +49,36 @@ h3 { @apply font-semibold; }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-secondary/50;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-black/10 rounded-full hover:bg-black/20;
+  @apply bg-black/10 rounded-full hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20;
 }
+
+/* Dashboard Utilities */
+.dashboard-card {
+  @apply bg-white dark:bg-neutral-900 border border-black/[0.04] dark:border-white/[0.04] shadow-[0_8px_30px_rgb(0,0,0,0.02)] dark:shadow-none;
+}
+
+.dashboard-btn {
+  @apply transition-all duration-300 active:scale-95;
+}
+
+.input-field {
+  @apply w-full bg-gray-50/50 dark:bg-neutral-800/50 rounded-xl px-5 py-3.5 outline-none border-2 border-transparent focus:border-black/5 dark:focus:border-white/5 dark:text-white font-medium transition-all;
+}
+
+.badge {
+  @apply px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider;
+}
+
+.badge-success { @apply bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400; }
+.badge-warning { @apply bg-amber-100 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400; }
+.badge-danger { @apply bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400; }
+.badge-neutral { @apply bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-neutral-400; }

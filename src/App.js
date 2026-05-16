@@ -12,18 +12,25 @@ import AdminLoginPage from "./pages/AdminPage/AdminLoginPage";
 import AdminDashboard from "./pages/AdminPage/AdminDashboard";
 import DynamicProductPage from "./pages/DynamicProductPage/DynamicProductPage";
 import AuthPage from "./pages/AuthPage/AuthPage";
+import UserProfile from "./pages/AuthPage/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 import { CartProvider } from './Context/CartContext';
 import { AuthProvider } from "./Context/AuthContext";
 import { ProductProvider } from "./Context/ProductContext";
+import { SettingsProvider } from "./Context/SettingsContext";
+import { OrderProvider } from "./Context/OrderContext";
+import { UserProvider } from "./Context/UserContext";
 
 function App() {
   return (
-    <AuthProvider>
-      <ProductProvider>
-        <CartProvider>
-          <Router>
+    <SettingsProvider>
+      <UserProvider>
+        <AuthProvider>
+          <ProductProvider>
+          <OrderProvider>
+            <CartProvider>
+              <Router>
             <ScrollToTop />
             <Header />
             <Routes>
@@ -32,17 +39,21 @@ function App() {
               <Route path="/product/:id" element={<DynamicProductPage />} />
               <Route path="/add-to-cart-page" element={<CartPage />} />
               <Route path="/checkout" element={<Checkout />} />
-              <Route path="/profile" element={<AuthPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/profile" element={<UserProfile />} />
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
             <Newsletter />
             <Footer />
-          </Router>
-        </CartProvider>
-      </ProductProvider>
-    </AuthProvider>
+              </Router>
+            </CartProvider>
+          </OrderProvider>
+        </ProductProvider>
+        </AuthProvider>
+      </UserProvider>
+    </SettingsProvider>
   );
 }
 

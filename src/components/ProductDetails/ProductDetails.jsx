@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 import { CartContext } from "../../Context/CartContext";
 import { FaCheck, FaPlus, FaMinus } from "react-icons/fa";
+import { FiChevronDown } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ProductDetails = ({ productData }) => {
   const { id, name, price, image, description, colors: dynamicColors, allImages, colorStock } = productData;
@@ -14,6 +16,7 @@ const ProductDetails = ({ productData }) => {
   const [activeImage, setActiveImage] = useState(image);
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [openAccordion, setOpenAccordion] = useState("details"); // details, shipping, reviews
   const { addToCart } = useContext(CartContext);
 
   const defaultColors = [
@@ -95,8 +98,17 @@ const ProductDetails = ({ productData }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Product Images */}
         <div className="flex flex-col md:flex-row-reverse gap-4">
-          <div className="flex-1 aspect-[3/4] rounded-[20px] overflow-hidden bg-[#F0EEED] dark:bg-neutral-800 flex items-center justify-center">
-            <img src={activeImage} alt={name} className="w-full h-full object-cover transition-transform duration-500" />
+          <div className="flex-1 aspect-[3/4] rounded-[20px] overflow-hidden bg-[#F0EEED] dark:bg-neutral-800 flex items-center justify-center relative">
+            <img 
+              src={activeImage} 
+              alt={name} 
+              className="w-full h-full object-cover transition-transform duration-500" 
+            />
+            {productData.isOnSale && (
+              <span className="absolute top-6 left-6 bg-red-500 text-white px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase shadow-lg shadow-red-500/30">
+                Sale
+              </span>
+            )}
           </div>
           {displayThumbnails.length > 1 && (
             <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto no-scrollbar">
@@ -164,13 +176,111 @@ const ProductDetails = ({ productData }) => {
           </div>
 
           {/* Quantity and Add to Cart */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 mb-12">
             <div className="flex items-center bg-[#F0F0F0] dark:bg-neutral-800 rounded-full px-4 md:px-6 py-3 md:py-4 gap-6 md:gap-8">
               <button onClick={decreaseQty} className="text-xl dark:text-white"><FaMinus /></button>
               <span className="font-bold text-lg md:text-xl dark:text-white min-w-[20px] text-center">{quantity}</span>
               <button onClick={increaseQty} className="text-xl dark:text-white"><FaPlus /></button>
             </div>
             <button onClick={handleAdd} className="flex-1 bg-black text-white dark:bg-white dark:text-black rounded-full font-bold text-base md:text-lg hover:opacity-90 transition-opacity active:scale-[0.98]">Add to Cart</button>
+          </div>
+
+          {/* Premium Accordion Section */}
+          <div className="space-y-4">
+            {/* Details Accordion */}
+            <div className="border-b border-black/5 dark:border-white/5 overflow-hidden">
+              <button 
+                onClick={() => setOpenAccordion(openAccordion === 'details' ? '' : 'details')}
+                className="w-full flex items-center justify-between py-5 text-left transition-colors hover:text-black/60 dark:hover:text-white/60"
+              >
+                <span className="font-bold text-sm uppercase tracking-widest dark:text-white">Product Details</span>
+                <motion.div animate={{ rotate: openAccordion === 'details' ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                  <FiChevronDown className="dark:text-white" size={18} />
+                </motion.div>
+              </button>
+              <AnimatePresence>
+                {openAccordion === 'details' && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                    className="pb-6"
+                  >
+                    <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                      Crafted with premium materials, this {productData.category} offers a perfect blend of comfort and style. 
+                      Designed for a modern fit, it features reinforced stitching and a lightweight feel. Follow the care instructions on the label to maintain optimal quality.
+                    </p>
+                    <ul className="list-disc list-inside mt-4 text-sm text-black/60 dark:text-white/60 space-y-1">
+                      <li>Material: 100% Premium Cotton Blend</li>
+                      <li>Fit: Tailored / True to Size</li>
+                      <li>Care: Machine wash cold, tumble dry low</li>
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Shipping Accordion */}
+            <div className="border-b border-black/5 dark:border-white/5 overflow-hidden">
+              <button 
+                onClick={() => setOpenAccordion(openAccordion === 'shipping' ? '' : 'shipping')}
+                className="w-full flex items-center justify-between py-5 text-left transition-colors hover:text-black/60 dark:hover:text-white/60"
+              >
+                <span className="font-bold text-sm uppercase tracking-widest dark:text-white">Shipping & Returns</span>
+                <motion.div animate={{ rotate: openAccordion === 'shipping' ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                  <FiChevronDown className="dark:text-white" size={18} />
+                </motion.div>
+              </button>
+              <AnimatePresence>
+                {openAccordion === 'shipping' && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                    className="pb-6"
+                  >
+                    <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                      We offer free standard shipping on all orders over Rs. 5000. Express delivery is available for an additional fee. 
+                      If you're not completely satisfied with your purchase, you can return it within 30 days of receipt in its original, unworn condition.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Reviews Accordion */}
+            <div className="border-b border-black/5 dark:border-white/5 overflow-hidden">
+              <button 
+                onClick={() => setOpenAccordion(openAccordion === 'reviews' ? '' : 'reviews')}
+                className="w-full flex items-center justify-between py-5 text-left transition-colors hover:text-black/60 dark:hover:text-white/60"
+              >
+                <span className="font-bold text-sm uppercase tracking-widest dark:text-white">Customer Reviews</span>
+                <motion.div animate={{ rotate: openAccordion === 'reviews' ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                  <FiChevronDown className="dark:text-white" size={18} />
+                </motion.div>
+              </button>
+              <AnimatePresence>
+                {openAccordion === 'reviews' && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                    className="pb-6"
+                  >
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 dark:bg-neutral-800 p-4 rounded-xl">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-yellow-400">★★★★★</span>
+                          <span className="text-xs font-bold dark:text-white">Sarah M.</span>
+                        </div>
+                        <p className="text-sm text-black/60 dark:text-white/60">"Absolutely love the quality and fit. Will definitely be ordering more colors soon!"</p>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-neutral-800 p-4 rounded-xl">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-yellow-400">★★★★☆</span>
+                          <span className="text-xs font-bold dark:text-white">John D.</span>
+                        </div>
+                        <p className="text-sm text-black/60 dark:text-white/60">"Great piece, fits perfectly. Delivery was faster than expected."</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>

@@ -15,8 +15,8 @@ const ShopPage = () => {
 
   useEffect(() => {
     if (location.state?.filterSale) {
-        setShowOnlySale(true);
-        setActiveCategory("All");
+      setShowOnlySale(true);
+      setActiveCategory("All");
     }
     if (location.state?.category) {
       setActiveCategory(location.state.category);
@@ -39,8 +39,8 @@ const ShopPage = () => {
     <div className="container mx-auto px-4 py-8 md:py-12 transition-colors duration-500">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm mb-8">
-        <Link to="/" className="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">Home</Link> 
-        <span className="text-black/60 dark:text-white/60">/</span> 
+        <Link to="/" className="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">Home</Link>
+        <span className="text-black/60 dark:text-white/60">/</span>
         <span className="font-bold dark:text-white">Shop</span>
       </nav>
 
@@ -50,7 +50,7 @@ const ShopPage = () => {
         </h1>
         <div className="text-black/60 dark:text-white/60 text-sm font-medium flex flex-col items-end">
           {searchQuery && (
-            <button 
+            <button
               onClick={() => setSearchQuery("")}
               className="text-xs text-red-500 hover:underline mb-1"
             >
@@ -73,22 +73,20 @@ const ShopPage = () => {
             <div className="flex flex-col gap-4">
               <button
                 onClick={() => { setActiveCategory("All"); setShowOnlySale(false); }}
-                className={`text-left text-base transition-colors ${
-                  activeCategory === "All" && !showOnlySale
-                    ? "font-bold text-black dark:text-white" 
+                className={`text-left text-base transition-colors ${activeCategory === "All" && !showOnlySale
+                    ? "font-bold text-black dark:text-white"
                     : "text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
-                }`}
+                  }`}
               >
                 All Products
               </button>
-              
+
               <button
                 onClick={() => { setShowOnlySale(!showOnlySale); setActiveCategory("All"); }}
-                className={`text-left text-base transition-colors flex items-center justify-between ${
-                  showOnlySale 
-                    ? "font-bold text-red-500" 
+                className={`text-left text-base transition-colors flex items-center justify-between ${showOnlySale
+                    ? "font-bold text-red-500"
                     : "text-black/60 dark:text-white/60 hover:text-red-500"
-                }`}
+                  }`}
               >
                 Sale Items
                 {showOnlySale && <span className="w-2 h-2 bg-red-500 rounded-full" />}
@@ -100,11 +98,10 @@ const ShopPage = () => {
                 <button
                   key={cat}
                   onClick={() => { setActiveCategory(cat); setShowOnlySale(false); }}
-                  className={`text-left text-base transition-colors ${
-                    activeCategory === cat && !showOnlySale
-                      ? "font-bold text-black dark:text-white" 
+                  className={`text-left text-base transition-colors ${activeCategory === cat && !showOnlySale
+                      ? "font-bold text-black dark:text-white"
                       : "text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -115,19 +112,19 @@ const ShopPage = () => {
 
         {/* Product Grid */}
         <div className="w-full lg:w-3/4">
-          <motion.div 
+          <motion.div
             layout
             className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"
           >
             <AnimatePresence>
               {filteredProducts.map((item) => (
-                <motion.div 
+                <motion.div
                   layout
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
-                  key={item.id} 
+                  key={item.id}
                 >
                   <ProductCard item={item} />
                 </motion.div>

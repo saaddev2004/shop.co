@@ -1,13 +1,14 @@
 import React, { createContext, useState, useContext } from "react";
+import { useSettings } from "./SettingsContext";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const { settings } = useSettings();
 
   const login = (email, password) => {
-    // Hardcoded credentials for now
-    if (email === "admin@shop.co" && password === "admin123") {
+    if (email === settings.adminEmail && password === settings.adminPassword) {
       setIsAdminAuthenticated(true);
       return true;
     }

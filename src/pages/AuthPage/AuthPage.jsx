@@ -1,11 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiMail, FiLock, FiUser, FiArrowRight, FiGithub, FiTwitter } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { useUser } from "../../Context/UserContext";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [error, setError] = useState("");
+  const { login, signup, currentUser } = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/profile");
+    }
+  }, [currentUser, navigate]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (isLogin) {
+      const res = login(formData.email, formData.password);
+      if (!res.success) setError(res.message);
+    } else {
+      if (!formData.name || !formData.email || !formData.password) {
+        setError("All fields are required");
+        return;
+      }
+      const res = signup(formData.name, formData.email, formData.password);
+      if (!res.success) setError(res.message);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -63,7 +91,8 @@ const AuthPage = () => {
           </div>
 
           <AnimatePresence mode="wait">
-            <motion.div
+            <motion.form
+              onSubmit={handleSubmit}
               key={isLogin ? "login" : "signup"}
               variants={containerVariants}
               initial="hidden"
@@ -71,6 +100,12 @@ const AuthPage = () => {
               exit="exit"
               className="space-y-5"
             >
+              {error && (
+                <div className="bg-red-50 dark:bg-red-900/20 text-red-500 px-4 py-3 rounded-xl text-sm font-bold text-center border border-red-500/20">
+                  {error}
+                </div>
+              )}
+
               {!isLogin && (
                 <div className="relative group">
                   <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40 group-focus-within:text-black dark:group-focus-within:text-white transition-colors" />
@@ -78,6 +113,8 @@ const AuthPage = () => {
                     type="text" 
                     placeholder="Full Name"
                     className="w-full bg-gray-50 dark:bg-neutral-800 border border-transparent focus:border-black/10 dark:focus:border-white/10 rounded-2xl px-12 py-4 outline-none transition-all dark:text-white"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
               )}
@@ -88,6 +125,8 @@ const AuthPage = () => {
                   type="email" 
                   placeholder="Email Address"
                   className="w-full bg-gray-50 dark:bg-neutral-800 border border-transparent focus:border-black/10 dark:focus:border-white/10 rounded-2xl px-12 py-4 outline-none transition-all dark:text-white"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
                 />
               </div>
 
@@ -97,6 +136,8 @@ const AuthPage = () => {
                   type="password" 
                   placeholder="Password"
                   className="w-full bg-gray-50 dark:bg-neutral-800 border border-transparent focus:border-black/10 dark:focus:border-white/10 rounded-2xl px-12 py-4 outline-none transition-all dark:text-white"
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
                 />
               </div>
 
@@ -108,10 +149,10 @@ const AuthPage = () => {
                 </div>
               )}
 
-              <button className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-xl mt-4">
+              <button type="submit" className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-xl mt-4">
                 {isLogin ? "Sign In" : "Create Account"} <FiArrowRight />
               </button>
-            </motion.div>
+            </motion.form>
           </AnimatePresence>
 
           <div className="mt-10">
@@ -137,7 +178,7 @@ const AuthPage = () => {
           <p className="mt-10 text-center text-black/60 dark:text-white/60">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button 
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => { setIsLogin(!isLogin); setError(""); setFormData({ name: "", email: "", password: "" }); }}
               className="font-bold text-black dark:text-white hover:underline transition-all"
             >
               {isLogin ? "Sign Up Free" : "Sign In Now"}
