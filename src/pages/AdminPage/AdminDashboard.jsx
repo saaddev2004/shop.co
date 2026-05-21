@@ -985,6 +985,7 @@ const AdminDashboard = () => {
                                                 <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-wider text-black/40 dark:text-white/40">Customer Details</th>
                                                 <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-wider text-black/40 dark:text-white/40">Date</th>
                                                 <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-wider text-black/40 dark:text-white/40">Reconciled Value</th>
+                                                <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-wider text-black/40 dark:text-white/40">Payment</th>
                                                 <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-wider text-black/40 dark:text-white/40">Execution Status</th>
                                                 <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-wider text-black/40 dark:text-white/40 text-right">Actions</th>
                                             </tr>
@@ -992,7 +993,7 @@ const AdminDashboard = () => {
                                         <tbody className="divide-y divide-black/[0.03] dark:divide-white/[0.03]">
                                             {orders.length === 0 ? (
                                                 <tr>
-                                                    <td colSpan="6" className="py-20 text-center text-black/30 dark:text-white/30 font-bold">
+                                                    <td colSpan="7" className="py-20 text-center text-black/30 dark:text-white/30 font-bold">
                                                         <FiShoppingBag className="mx-auto mb-4 text-black/10 dark:text-white/10" size={40} />
                                                         No orders have been placed in the system yet.
                                                     </td>
@@ -1005,10 +1006,18 @@ const AdminDashboard = () => {
                                                             <div>
                                                                 <p className="text-sm font-bold dark:text-white">{order.customer || order.firstName + ' ' + order.lastName}</p>
                                                                 <p className="text-[10px] text-black/40 dark:text-white/40 mt-0.5">{order.email}</p>
+                                                                {order.phone && (
+                                                                    <p className="text-[10px] text-black/50 dark:text-white/50 mt-0.5 font-medium">{order.phone}</p>
+                                                                )}
                                                             </div>
                                                         </td>
                                                         <td className="py-5 px-6 text-xs text-black/55 dark:text-white/55 font-semibold">{order.date}</td>
                                                         <td className="py-5 px-6 text-sm font-black dark:text-white">{settings.currency.split(' ')[0]} {order.total?.toLocaleString() || "0"}</td>
+                                                        <td className="py-5 px-6">
+                                                            <span className={`inline-block text-[9px] font-bold px-2.5 py-1 rounded-lg ${order.paymentMethod === 'Card' ? 'bg-indigo-55 text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-400' : 'bg-emerald-55 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400'}`}>
+                                                                {order.paymentMethod || "COD"}
+                                                            </span>
+                                                        </td>
                                                         <td className="py-5 px-6">
                                                             <span className={`badge ${order.status === 'Delivered' ? 'badge-success' :
                                                                     order.status === 'Pending' ? 'badge-warning' :
@@ -1286,6 +1295,20 @@ const AdminDashboard = () => {
                                         <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Email Coordinates</p>
                                         <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.email}</p>
                                     </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Phone Number</p>
+                                        <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.phone || "N/A"}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Payment Method</p>
+                                        <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.paymentMethod || "COD"}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Shipping Address</p>
+                                    <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.address || "N/A"}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Purchased Items Payload</p>
