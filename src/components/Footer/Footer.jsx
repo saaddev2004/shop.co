@@ -1,11 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  FaFacebookF,
   FaInstagram,
   FaGithub,
-  FaXTwitter,
+  FaLinkedinIn,
 } from "react-icons/fa6";
+import { FaCcVisa, FaCcMastercard, FaCcPaypal, FaCcApplePay } from "react-icons/fa";
 
 const Footer = () => {
   const sections = [
@@ -62,11 +62,17 @@ const Footer = () => {
               wear. From women to men.
             </p>
             <div className="flex gap-4">
-              {[FaXTwitter, FaFacebookF, FaInstagram, FaGithub].map((Icon, i) => (
+              {[
+                { Icon: FaGithub, url: "https://github.com/saaddev2004", hoverClass: "hover:text-[#333] dark:hover:text-white" },
+                { Icon: FaInstagram, url: "https://www.instagram.com/_m.saadd/?__pwa=1", hoverClass: "hover:text-[#E1306C]" },
+                { Icon: FaLinkedinIn, url: "https://www.linkedin.com/in/m-saad-dev/", hoverClass: "hover:text-[#0A66C2]" }
+              ].map(({ Icon, url, hoverClass }, i) => (
                 <a 
                   key={i} 
-                  href="#" 
-                  className="w-10 h-10 rounded-full bg-white dark:bg-black border border-black/10 dark:border-white/10 flex items-center justify-center hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all"
+                  href={url} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-10 h-10 rounded-full bg-white dark:bg-black border border-black/10 dark:border-white/10 flex items-center justify-center text-black/60 dark:text-white/60 transition-all hover:scale-110 shadow-sm hover:shadow-md hover:border-black/20 dark:hover:border-white/20 ${hoverClass}`}
                 >
                   <Icon size={18} />
                 </a>
@@ -101,13 +107,32 @@ const Footer = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-6"
+          className="pt-8 mt-12 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-6"
         >
-          <p className="text-black/60 dark:text-white/60 text-sm text-center md:text-left">
-            Shop.co Ã‚Â© 2000-2024, All Rights Reserved
-          </p>
-          <div className="flex items-center gap-4 bg-white dark:bg-neutral-800 px-4 py-2 rounded-lg border border-black/5 dark:border-white/5">
-            <img src="/assets/banking.svg" alt="Payment Methods" className="h-8 md:h-10 object-contain" />
+          <div className="text-center md:text-left flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+            <p className="text-black/60 dark:text-white/60 text-sm font-medium">
+              SHOP.CO &copy; {new Date().getFullYear()}. All Rights Reserved.
+            </p>
+            <div className="hidden md:block w-1 h-1 rounded-full bg-black/20 dark:bg-white/20" />
+            <p className="text-black/50 dark:text-white/50 text-sm font-medium flex items-center justify-center md:justify-start gap-1.5">
+              Designed & Developed by
+              <a href="#" className="text-black dark:text-white font-bold hover:underline transition-all">
+                Muhammad Saad
+              </a>
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {[
+              { Icon: FaCcVisa, colorClass: "hover:text-[#1434CB]" },
+              { Icon: FaCcMastercard, colorClass: "hover:text-[#EB001B]" },
+              { Icon: FaCcPaypal, colorClass: "hover:text-[#00457C]" },
+              { Icon: FaCcApplePay, colorClass: "hover:text-black dark:hover:text-white" }
+            ].map(({ Icon, colorClass }, idx) => (
+              <div key={idx} className={`bg-white dark:bg-neutral-800 w-12 h-8 rounded-lg border border-black/10 dark:border-white/10 flex items-center justify-center shadow-sm hover:scale-110 transition-all cursor-pointer text-black/40 dark:text-white/40 ${colorClass}`}>
+                <Icon size={22} />
+              </div>
+            ))}
           </div>
         </motion.div>
       </div>
