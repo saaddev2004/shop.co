@@ -4,7 +4,7 @@ import { CartContext } from "../../Context/CartContext";
 import { useOrders } from "../../Context/OrderContext";
 import { useUser } from "../../Context/UserContext";
 import { useProducts } from "../../Context/ProductContext";
-import { FaCreditCard, FaMoneyBillWave, FaLock, FaMapMarkerAlt, FaPhone, FaEnvelope, FaUser, FaChevronRight } from "react-icons/fa";
+import { FaCreditCard, FaMoneyBillWave, FaLock, FaMapMarkerAlt, FaUser, FaChevronRight } from "react-icons/fa";
 
 const Checkout = () => {
   const { items, clearCart } = useContext(CartContext);
@@ -107,7 +107,7 @@ const Checkout = () => {
       if (!formData.cardExpiry.includes("/") || formData.cardExpiry.length !== 5) {
         newErrors.cardExpiry = "Expiry date must be MM/YY";
       } else {
-        const [mm, yy] = formData.cardExpiry.split("/");
+        const [mm] = formData.cardExpiry.split("/");
         const month = parseInt(mm, 10);
         if (month < 1 || month > 12) {
           newErrors.cardExpiry = "Invalid month";
