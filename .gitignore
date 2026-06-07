@@ -1,4 +1,4 @@
-# Ignore frontend dependencies and build outputs
+# ── Frontend ──────────────────────────────────────
 frontend/node_modules/
 frontend/build/
 frontend/.pnp
@@ -7,3 +7,13 @@ frontend/coverage/
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+
+# ── Backend ───────────────────────────────────────
+backend/node_modules/
+backend/.env           # NEVER commit secrets to GitHub!
+
+# ── General ───────────────────────────────────────
+.env
+.env.local
+.DS_Store
+Thumbs.db
