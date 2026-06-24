@@ -35,7 +35,7 @@ const productSchema = new mongoose.Schema(
         color: String,
         url: String,
       },
-    ], // Different color images
+    ], // Images for each color variant
     sizes: [
       { 
         type: String 
@@ -50,7 +50,7 @@ const productSchema = new mongoose.Schema(
       type: Map,
       of: Number,
       default: {},
-    }, // Track stock for each color
+    }, // Track stock quantity for each color
     rating: { 
       type: Number, 
       default: 4.5, 
@@ -69,10 +69,10 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    }, // Jis admin ne yeh product add kiya uski ID
+    }, // ID of the admin who added this product
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt dates
+    timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
 );
 

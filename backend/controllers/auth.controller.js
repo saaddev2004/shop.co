@@ -110,7 +110,7 @@ const logoutUser = (req, res) => {
 // @access  Private
 const getMe = async (req, res) => {
   try {
-    // req.user.id aayega Step 4 (Middleware) ki wajah se jo hum baad mein banayenge
+    // req.user is set by the protect middleware (Step 4)
     const user = await User.findById(req.user.id);
 
     if (user) {

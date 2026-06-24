@@ -1,19 +1,18 @@
 const Product = require("../models/Product.model");
 
-// @desc    Sare products laana (Get all products)
+// @desc    Get all products
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
   try {
-    // Sab products fetch karo database se
     const products = await Product.find({});
     res.json(products);
   } catch (error) {
-    res.status(500).json({ message: "Products fetch karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to fetch products", error: error.message });
   }
 };
 
-// @desc    Ek khaas product laana uski ID se (Get single product by ID)
+// @desc    Get single product by ID
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = async (req, res) => {
@@ -23,19 +22,18 @@ const getProductById = async (req, res) => {
     if (product) {
       res.json(product);
     } else {
-      res.status(404).json({ message: "Product nahi mila" });
+      res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-// @desc    Naye aaye hue products laana (Get new arrivals)
+// @desc    Get new arrival products
 // @route   GET /api/products/new-arrivals
 // @access  Public
 const getNewArrivals = async (req, res) => {
   try {
-    // Wo products lao jinka 'isNewArrival' true hai
     const products = await Product.find({ isNewArrival: true });
     res.json(products);
   } catch (error) {
@@ -43,12 +41,11 @@ const getNewArrivals = async (req, res) => {
   }
 };
 
-// @desc    Sale wale products laana (Get on sale products)
+// @desc    Get products on sale
 // @route   GET /api/products/on-sale
 // @access  Public
 const getOnSaleProducts = async (req, res) => {
   try {
-    // Wo products lao jinka 'isOnSale' true hai
     const products = await Product.find({ isOnSale: true });
     res.json(products);
   } catch (error) {
@@ -56,7 +53,7 @@ const getOnSaleProducts = async (req, res) => {
   }
 };
 
-// @desc    Naya product add karna (Create a product)
+// @desc    Create a new product
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = async (req, res) => {
@@ -91,17 +88,17 @@ const createProduct = async (req, res) => {
       colorStock,
       isOnSale,
       isNewArrival,
-      createdBy: req.user._id, // Jis admin ne request bheji hai uski ID
+      createdBy: req.user._id, // ID of the admin making the request
     });
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
-    res.status(500).json({ message: "Product create karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to create product", error: error.message });
   }
 };
 
-// @desc    Product ki details update karna (Update a product)
+// @desc    Update an existing product
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
@@ -109,7 +106,7 @@ const updateProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-      // Jo fields body mein aayi hain unko update karo, warna purani wali hi rehne do
+      // Update only the fields provided in the request body, keep existing values otherwise
       product.name = req.body.name || product.name;
       product.description = req.body.description || product.description;
       product.price = req.body.price || product.price;
@@ -127,14 +124,14 @@ const updateProduct = async (req, res) => {
       const updatedProduct = await product.save();
       res.json(updatedProduct);
     } else {
-      res.status(404).json({ message: "Product nahi mila" });
+      res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Product update karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to update product", error: error.message });
   }
 };
 
-// @desc    Product delete karna (Delete a product)
+// @desc    Delete a product
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
 const deleteProduct = async (req, res) => {
@@ -143,12 +140,12 @@ const deleteProduct = async (req, res) => {
 
     if (product) {
       await Product.deleteOne({ _id: product._id });
-      res.json({ message: "Product delete ho gaya" });
+      res.json({ message: "Product deleted successfully" });
     } else {
-      res.status(404).json({ message: "Product nahi mila" });
+      res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Product delete karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to delete product", error: error.message });
   }
 };
 

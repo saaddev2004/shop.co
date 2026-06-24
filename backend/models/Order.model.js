@@ -5,22 +5,22 @@ const orderSchema = new mongoose.Schema(
     orderId: {
       type: String,
       unique: true,
-    }, // e.g. "ORD-1234" — auto-generate karenge save se pehle
+    }, // e.g. "ORD-1234" — auto-generated before save
 
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
-    }, // Agar guest checkout hai toh null hoga
+    }, // null if guest checkout
 
-    // Customer details (Chahe logged in ho ya guest)
+    // Customer details (applies to both logged-in users and guests)
     customer: { type: String, required: true },
     email:    { type: String, required: true },
     phone:    { type: String, required: true },
     address:  { type: String, required: true },
     city:     { type: String, required: true },
 
-    // Ordered items ki list
+    // List of ordered items
     items: [
       {
         productId:     { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
@@ -62,7 +62,7 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-// Order save hone se pehle ek unique orderId auto-generate karo
+// Auto-generate a unique orderId before saving
 orderSchema.pre("save", async function (next) {
   if (!this.orderId) {
     const count = await mongoose.model("Order").countDocuments();

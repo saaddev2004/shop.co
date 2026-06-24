@@ -1,6 +1,6 @@
 const Order = require("../models/Order.model");
 
-// @desc    Naya order place karna
+// @desc    Place a new order
 // @route   POST /api/orders
 // @access  Private (User) or Guest
 const placeOrder = async (req, res) => {
@@ -21,11 +21,11 @@ const placeOrder = async (req, res) => {
 
     // Basic validation
     if (!items || items.length === 0) {
-      return res.status(400).json({ message: "Order mein koi item nahi hai" });
+      return res.status(400).json({ message: "Order has no items" });
     }
 
     const order = new Order({
-      // Agar user logged in hai toh uski ID save karo, warna null (guest)
+      // Save user ID if logged in, otherwise null (guest checkout)
       user: req.user ? req.user._id : null,
       customer,
       email,
@@ -43,24 +43,24 @@ const placeOrder = async (req, res) => {
     const createdOrder = await order.save();
     res.status(201).json(createdOrder);
   } catch (error) {
-    res.status(500).json({ message: "Order place karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to place order", error: error.message });
   }
 };
 
-// @desc    Logged-in user ke sare orders dekhna
+// @desc    Get all orders of the logged-in user
 // @route   GET /api/orders/my-orders
 // @access  Private (User)
 const getMyOrders = async (req, res) => {
   try {
-    // Sirf uss user ke orders lao jinka ID req.user._id se match kare
+    // Fetch only orders belonging to the current logged-in user, latest first
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: "Orders fetch karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
   }
 };
 
-// @desc    Kisi ek order ki detail ID se dekhna
+// @desc    Get a single order by ID
 // @route   GET /api/orders/:id
 // @access  Private (User/Admin)
 const getOrderById = async (req, res) => {
@@ -68,12 +68,12 @@ const getOrderById = async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (!order) {
-      return res.status(404).json({ message: "Order nahi mila" });
+      return res.status(404).json({ message: "Order not found" });
     }
 
-    // Security check: Sirf khud ka order dekh sakta hai, ya Admin
+    // Security check: only the order owner or an admin can view it
     if (order.user && order.user.toString() !== req.user._id.toString() && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Yeh order dekhne ki ijazat nahi" });
+      return res.status(403).json({ message: "Not authorized to view this order" });
     }
 
     res.json(order);
@@ -82,20 +82,20 @@ const getOrderById = async (req, res) => {
   }
 };
 
-// @desc    Sare orders dekhna (Admin panel ke liye)
+// @desc    Get all orders (Admin panel)
 // @route   GET /api/orders
 // @access  Private/Admin
 const getAllOrders = async (req, res) => {
   try {
-    // Sare orders lao aur sath mein customer ka naam bhi populate karo
+    // Fetch all orders and populate user name and email alongside
     const orders = await Order.find({}).populate("user", "name email").sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: "Orders fetch karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
   }
 };
 
-// @desc    Order ka status update karna (Pending → Shipped etc.)
+// @desc    Update order status (Pending → Shipped etc.)
 // @route   PUT /api/orders/:id/status
 // @access  Private/Admin
 const updateOrderStatus = async (req, res) => {
@@ -103,12 +103,12 @@ const updateOrderStatus = async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (!order) {
-      return res.status(404).json({ message: "Order nahi mila" });
+      return res.status(404).json({ message: "Order not found" });
     }
 
     order.status = req.body.status || order.status;
 
-    // Agar order deliver ho gaya toh payment status bhi Paid kar do (COD ke liye)
+    // Auto-mark payment as Paid when order is delivered via COD
     if (req.body.status === "Delivered" && order.paymentMethod === "COD") {
       order.paymentStatus = "Paid";
     }
@@ -116,11 +116,11 @@ const updateOrderStatus = async (req, res) => {
     const updatedOrder = await order.save();
     res.json(updatedOrder);
   } catch (error) {
-    res.status(500).json({ message: "Status update karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to update order status", error: error.message });
   }
 };
 
-// @desc    Order delete karna
+// @desc    Delete an order
 // @route   DELETE /api/orders/:id
 // @access  Private/Admin
 const deleteOrder = async (req, res) => {
@@ -128,13 +128,13 @@ const deleteOrder = async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (!order) {
-      return res.status(404).json({ message: "Order nahi mila" });
+      return res.status(404).json({ message: "Order not found" });
     }
 
     await Order.deleteOne({ _id: order._id });
-    res.json({ message: "Order delete ho gaya" });
+    res.json({ message: "Order deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Order delete karne mein masla aaya", error: error.message });
+    res.status(500).json({ message: "Failed to delete order", error: error.message });
   }
 };
 

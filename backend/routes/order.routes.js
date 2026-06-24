@@ -6,7 +6,7 @@ const { admin } = require("../middleware/admin.middleware");
 const router = express.Router();
 
 // User Routes
-// ⚠️ /my-orders route ko /:id se UPAR rakhna zaroori hai
+// ⚠️ /my-orders must be defined before /:id to avoid being treated as an ID
 router.post("/", protect, placeOrder);
 router.get("/my-orders", protect, getMyOrders);
 router.get("/:id", protect, getOrderById);
