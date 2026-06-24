@@ -6,8 +6,8 @@ const {
   getMe,
 } = require("../controllers/auth.controller");
 
-// Step 4 ka middleware (Jab hum banayenge toh yahan use karenge)
-// const { protect } = require("../middleware/auth.middleware");
+// Step 4 ka middleware
+const { protect } = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 
-// Private Route (Sirf logged-in users ke liye - baad me protect middleware lagega)
-router.get("/me", getMe);
+// Private Route (Sirf logged-in users ke liye - protect middleware lag chuka hai)
+router.get("/me", protect, getMe);
 
 module.exports = router;

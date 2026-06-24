@@ -335,7 +335,8 @@ npm install -D nodemon
 Step 1  →  server.js + db.js + .env setup
 Step 2  →  User model + bcrypt password hashing
 Step 3  →  Auth routes (Register / Login / Logout / Me)
-Step 4  →  JWT middleware (auth.middleware + admin.middleware)
+Step 4.1 →  JWT auth middleware (auth.middleware.js) & apply to routes
+Step 4.2 →  JWT admin middleware (admin.middleware.js)
 Step 5  →  Product model + full CRUD routes
 Step 6  →  Order model + Place order route
 Step 7  →  Admin routes (manage orders, users, settings)
