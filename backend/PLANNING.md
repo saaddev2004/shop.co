@@ -343,7 +343,8 @@ Step 5.3 →  Product Admin API (Add, Update, Delete Products)
 Step 6.1 →  Order Model (Order.model.js)
 Step 6.2 →  User Order Routes (Place order, My orders, Single order)
 Step 6.3 →  Admin Order Routes (All orders, Update status, Delete)
-Step 7  →  Admin routes (manage orders, users, settings)
+Step 7.1 →  User Management API (Get all users, Delete user)
+Step 7.2 →  Store Settings Model + API (Get & Update settings)
 Step 8  →  Review routes
 Step 9  →  Frontend integration (replace Context localStorage with real API calls)
 ```
