@@ -337,7 +337,9 @@ Step 2  →  User model + bcrypt password hashing
 Step 3  →  Auth routes (Register / Login / Logout / Me)
 Step 4.1 →  JWT auth middleware (auth.middleware.js) & apply to routes
 Step 4.2 →  JWT admin middleware (admin.middleware.js)
-Step 5  →  Product model + full CRUD routes
+Step 5.1 →  Product Model (Product.model.js)
+Step 5.2 →  Product Public API (Get Products, New Arrivals, On Sale)
+Step 5.3 →  Product Admin API (Add, Update, Delete Products)
 Step 6  →  Order model + Place order route
 Step 7  →  Admin routes (manage orders, users, settings)
 Step 8  →  Review routes
