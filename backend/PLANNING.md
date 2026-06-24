@@ -345,7 +345,8 @@ Step 6.2 →  User Order Routes (Place order, My orders, Single order)
 Step 6.3 →  Admin Order Routes (All orders, Update status, Delete)
 Step 7.1 →  User Management API (Get all users, Delete user)
 Step 7.2 →  Store Settings Model + API (Get & Update settings)
-Step 8  →  Review routes
+Step 8.1 →  Review Model (Review.model.js)
+Step 8.2 →  Review Routes + Controller (Get, Submit, Delete + auto-update product rating)
 Step 9  →  Frontend integration (replace Context localStorage with real API calls)
 ```
 
