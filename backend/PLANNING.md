@@ -340,7 +340,9 @@ Step 4.2 →  JWT admin middleware (admin.middleware.js)
 Step 5.1 →  Product Model (Product.model.js)
 Step 5.2 →  Product Public API (Get Products, New Arrivals, On Sale)
 Step 5.3 →  Product Admin API (Add, Update, Delete Products)
-Step 6  →  Order model + Place order route
+Step 6.1 →  Order Model (Order.model.js)
+Step 6.2 →  User Order Routes (Place order, My orders, Single order)
+Step 6.3 →  Admin Order Routes (All orders, Update status, Delete)
 Step 7  →  Admin routes (manage orders, users, settings)
 Step 8  →  Review routes
 Step 9  →  Frontend integration (replace Context localStorage with real API calls)
