@@ -1,10 +1,33 @@
 const Order = require("../models/Order.model");
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const User = require("../models/User.model");
+
+const formatOrder = (order) => {
+  const obj = order.toObject ? order.toObject() : order;
+  return {
+    ...obj,
+    id: obj.orderId || obj._id?.toString(),
+  };
+};
 
 // @desc    Place a new order
 // @route   POST /api/orders
 // @access  Private (User) or Guest
 const placeOrder = async (req, res) => {
   try {
+    // Optionally identify the user if they are logged in (cookie present)
+    let userId = null;
+    if (req.cookies && req.cookies.token) {
+      try {
+        const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select("_id");
+        if (user) userId = user._id;
+      } catch (e) {
+        // Invalid token — treat as guest
+      }
+    }
+
     const {
       customer,
       email,
@@ -21,18 +44,25 @@ const placeOrder = async (req, res) => {
 
     // Basic validation
     if (!items || items.length === 0) {
-      return res.status(400).json({ message: "Order has no items" });
+      return res.status(400).json({ success: false, message: "Order has no items" });
     }
 
+    const sanitizedItems = items.map((item) => {
+      const sanitized = { ...item };
+      if (sanitized.productId && !mongoose.Types.ObjectId.isValid(sanitized.productId)) {
+        delete sanitized.productId;
+      }
+      return sanitized;
+    });
+
     const order = new Order({
-      // Save user ID if logged in, otherwise null (guest checkout)
-      user: req.user ? req.user._id : null,
+      user: userId,
       customer,
       email,
       phone,
       address,
       city,
-      items,
+      items: sanitizedItems,
       paymentMethod,
       subtotal,
       discount,
@@ -41,9 +71,9 @@ const placeOrder = async (req, res) => {
     });
 
     const createdOrder = await order.save();
-    res.status(201).json(createdOrder);
+    res.status(201).json({ success: true, order: formatOrder(createdOrder) });
   } catch (error) {
-    res.status(500).json({ message: "Failed to place order", error: error.message });
+    res.status(500).json({ success: false, message: "Failed to place order", error: error.message });
   }
 };
 
@@ -54,9 +84,9 @@ const getMyOrders = async (req, res) => {
   try {
     // Fetch only orders belonging to the current logged-in user, latest first
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
-    res.json(orders);
+    res.json({ success: true, orders: orders.map(formatOrder) });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
+    res.status(500).json({ success: false, message: "Failed to fetch orders", error: error.message });
   }
 };
 
@@ -76,9 +106,9 @@ const getOrderById = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to view this order" });
     }
 
-    res.json(order);
+    res.json({ success: true, order: formatOrder(order) });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 
@@ -89,9 +119,9 @@ const getAllOrders = async (req, res) => {
   try {
     // Fetch all orders and populate user name and email alongside
     const orders = await Order.find({}).populate("user", "name email").sort({ createdAt: -1 });
-    res.json(orders);
+    res.json({ success: true, orders: orders.map(formatOrder) });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
+    res.status(500).json({ success: false, message: "Failed to fetch orders", error: error.message });
   }
 };
 
@@ -114,9 +144,9 @@ const updateOrderStatus = async (req, res) => {
     }
 
     const updatedOrder = await order.save();
-    res.json(updatedOrder);
+    res.json({ success: true, order: formatOrder(updatedOrder) });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update order status", error: error.message });
+    res.status(500).json({ success: false, message: "Failed to update order status", error: error.message });
   }
 };
 
@@ -132,9 +162,9 @@ const deleteOrder = async (req, res) => {
     }
 
     await Order.deleteOne({ _id: order._id });
-    res.json({ message: "Order deleted successfully" });
+    res.json({ success: true, message: "Order deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete order", error: error.message });
+    res.status(500).json({ success: false, message: "Failed to delete order", error: error.message });
   }
 };
 

@@ -7,7 +7,7 @@ const router = express.Router();
 
 // User Routes
 // ⚠️ /my-orders must be defined before /:id to avoid being treated as an ID
-router.post("/", protect, placeOrder);
+router.post("/", placeOrder); // Guest and user both allowed — auth handled in controller
 router.get("/my-orders", protect, getMyOrders);
 router.get("/:id", protect, getOrderById);
 

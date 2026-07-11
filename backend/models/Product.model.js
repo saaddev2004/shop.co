@@ -48,9 +48,9 @@ const productSchema = new mongoose.Schema(
     ], // e.g. ["#000000", "#FFFFFF"]
     colorStock: {
       type: Map,
-      of: Number,
+      of: mongoose.Schema.Types.Mixed,
       default: {},
-    }, // Track stock quantity for each color
+    }, // Track stock quantity for each color (and size)
     rating: { 
       type: Number, 
       default: 4.5, 

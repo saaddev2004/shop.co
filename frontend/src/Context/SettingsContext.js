@@ -1,24 +1,41 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import api from "../utils/api";
 
 const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
-  const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem("shop_settings");
-    return saved ? JSON.parse(saved) : {
-      storeName: "SHOP.CO Official Outlet",
-      currency: "PKR (Rs.)",
-      adminEmail: "admin@shop.co",
-      adminPassword: "admin123"
-    };
+  const [settings, setSettings] = useState({
+    storeName: "SHOP.CO",
+    currency: "PKR (Rs.)",
+    deliveryFee: 15,
+    discountPercent: 20
   });
 
   useEffect(() => {
-    localStorage.setItem("shop_settings", JSON.stringify(settings));
-  }, [settings]);
+    const fetchSettings = async () => {
+      try {
+        const { data } = await api.get("/settings");
+        if (data.success && data.settings) {
+          setSettings(data.settings);
+        }
+      } catch (error) {
+        console.error("Failed to fetch settings:", error);
+      }
+    };
+    fetchSettings();
+  }, []);
 
-  const updateSettings = (newSettings) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+  const updateSettings = async (newSettings) => {
+    try {
+      const { data } = await api.put("/settings", newSettings);
+      if (data.success) {
+        setSettings(data.settings);
+        return { success: true };
+      }
+    } catch (error) {
+      console.error("Failed to update settings:", error);
+      return { success: false };
+    }
   };
 
   return (

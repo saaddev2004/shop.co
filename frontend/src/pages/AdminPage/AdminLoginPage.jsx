@@ -11,12 +11,13 @@ const AdminLoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (login(email, password)) {
+    const res = await login(email, password);
+    if (res && res.success) {
       navigate("/admin");
     } else {
-      setError("Invalid administrative credentials");
+      setError(res?.message || "Invalid administrative credentials");
     }
   };
 

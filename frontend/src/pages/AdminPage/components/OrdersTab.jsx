@@ -15,7 +15,7 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
 
     const handleUpdateOrderStatus = (orderId, newStatus) => {
         updateOrderStatus(orderId, newStatus);
-        if (selectedOrder && selectedOrder.id === orderId) {
+        if (selectedOrder && (selectedOrder._id === orderId || selectedOrder.id === orderId)) {
             setSelectedOrder(prev => ({ ...prev, status: newStatus }));
         }
         setSuccessMsg(`Order ${orderId} marked as ${newStatus}`);
@@ -50,8 +50,8 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
                                 </tr>
                             ) : (
                                 orders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-gray-50/30 dark:hover:bg-neutral-800/10 transition-colors">
-                                        <td className="py-5 px-6 text-sm font-bold dark:text-white">{order.id}</td>
+                                    <tr key={order._id || order.id} className="hover:bg-gray-50/30 dark:hover:bg-neutral-800/10 transition-colors">
+                                        <td className="py-5 px-6 text-sm font-bold dark:text-white">{order.orderId || order._id || order.id}</td>
                                         <td className="py-5 px-6">
                                             <div>
                                                 <p className="text-sm font-bold dark:text-white">{order.customer || order.firstName + ' ' + order.lastName}</p>
@@ -61,7 +61,7 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="py-5 px-6 text-xs text-black/55 dark:text-white/55 font-semibold">{order.date}</td>
+                                        <td className="py-5 px-6 text-xs text-black/55 dark:text-white/55 font-semibold">{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : order.date}</td>
                                         <td className="py-5 px-6 text-sm font-black dark:text-white">{settings.currency.split(' ')[0]} {order.total?.toLocaleString() || "0"}</td>
                                         <td className="py-5 px-6">
                                             <span className={`inline-block text-[9px] font-bold px-2.5 py-1 rounded-lg ${order.paymentMethod === 'Card' ? 'bg-indigo-55 text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-400' : 'bg-emerald-55 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400'}`}>
@@ -87,7 +87,7 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
                                                 </button>
                                                 <select
                                                     value={order.status}
-                                                    onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                                                    onChange={(e) => handleUpdateOrderStatus(order._id || order.id, e.target.value)}
                                                     className="bg-gray-50 dark:bg-neutral-800 text-[10px] font-bold py-2 px-3 rounded-lg border-none outline-none dark:text-white cursor-pointer"
                                                 >
                                                     <option value="Pending">Pending</option>
@@ -119,11 +119,11 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Order Identifier</p>
-                                        <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.id}</p>
+                                        <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.orderId || selectedOrder._id || selectedOrder.id}</p>
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Transaction Date</p>
-                                        <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.date}</p>
+                                        <p className="text-sm font-bold dark:text-white mt-1">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString() : selectedOrder.date}</p>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
@@ -153,8 +153,8 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
                                 <div>
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-black/40">Purchased Items Payload</p>
                                     <div className="mt-1 bg-gray-50 dark:bg-neutral-800 p-4 rounded-xl space-y-2">
-                                        {selectedOrder.cart ? (
-                                            selectedOrder.cart.map((item, idx) => (
+                                        {(selectedOrder.cart || selectedOrder.items) ? (
+                                            (selectedOrder.cart || selectedOrder.items).map((item, idx) => (
                                                 <div key={idx} className="flex justify-between text-xs font-medium dark:text-white">
                                                     <span>{item.quantity}x {item.name} ({item.selectedColor}, {item.selectedSize})</span>
                                                     <span>Rs. {item.price * item.quantity}</span>
@@ -183,7 +183,7 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
                                 <div className="flex gap-2">
                                     {selectedOrder.status !== 'Delivered' && selectedOrder.status !== 'Cancelled' && (
                                         <button
-                                            onClick={() => handleUpdateOrderStatus(selectedOrder.id, "Delivered")}
+                                            onClick={() => handleUpdateOrderStatus(selectedOrder._id || selectedOrder.id, "Delivered")}
                                             className="px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-green-500/10"
                                         >
                                             <FiCheck size={14} /> Deliver
@@ -191,7 +191,7 @@ const OrdersTab = ({ setSuccess, setSuccessMsg }) => {
                                     )}
                                     {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
                                         <button
-                                            onClick={() => handleUpdateOrderStatus(selectedOrder.id, "Cancelled")}
+                                            onClick={() => handleUpdateOrderStatus(selectedOrder._id || selectedOrder.id, "Cancelled")}
                                             className="px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-red-500/10"
                                         >
                                             <FiX size={14} /> Cancel

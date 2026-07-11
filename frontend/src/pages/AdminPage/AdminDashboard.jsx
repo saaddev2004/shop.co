@@ -76,20 +76,28 @@ const AdminDashboard = () => {
         setActiveTab("editor");
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formData.name.trim()) return alert("Product name is required.");
+        if (!formData.price) return alert("Product price is required.");
         if (formData.colors.length === 0) return alert("Please register at least one color for the product.");
         if (images.length === 0) return alert("Please upload at least one image");
         const productPayload = { ...formData, image: images[0]?.url || "", allImages: images };
+        
+        let res;
         if (editingProductId) {
-            updateProduct(editingProductId, productPayload);
-            setSuccessMsg("Product details updated successfully!");
+            res = await updateProduct(editingProductId, productPayload);
         } else {
-            addProduct(productPayload);
-            setSuccessMsg("New product launched successfully!");
+            res = await addProduct(productPayload);
         }
-        setSuccess(true);
-        setTimeout(() => { setSuccess(false); resetForm(); setActiveTab("products"); }, 1500);
+
+        if (res && res.success) {
+            setSuccessMsg(editingProductId ? "Product details updated successfully!" : "New product launched successfully!");
+            setSuccess(true);
+            setTimeout(() => { setSuccess(false); resetForm(); setActiveTab("products"); }, 1500);
+        } else {
+            alert(res?.message || "Operation failed. Check server logs or inputs.");
+        }
     };
 
     return (

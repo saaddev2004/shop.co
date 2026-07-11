@@ -31,11 +31,11 @@ const AdminHeader = ({ activeTab, editingProductId, setIsSidebarOpen, isDarkMode
 
                 <div className="flex items-center gap-3 pl-3 sm:pl-6 border-l border-black/[0.05] dark:border-white/[0.05]">
                     <div className="text-right hidden sm:block">
-                        <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">{settings.adminEmail.split('@')[0]}</p>
+                        <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">{settings?.adminEmail ? settings.adminEmail.split('@')[0] : 'admin'}</p>
                         <p className="text-[10px] font-medium text-black/40 dark:text-white/40">Super Admin</p>
                     </div>
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black dark:bg-white rounded-xl flex items-center justify-center font-black text-white dark:text-black text-sm uppercase">
-                        {settings.adminEmail.charAt(0)}
+                        {settings?.adminEmail ? settings.adminEmail.charAt(0) : 'A'}
                     </div>
                 </div>
             </div>

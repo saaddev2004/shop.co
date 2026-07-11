@@ -63,12 +63,11 @@ const orderSchema = new mongoose.Schema(
 );
 
 // Auto-generate a unique orderId before saving
-orderSchema.pre("save", async function (next) {
+orderSchema.pre("save", async function () {
   if (!this.orderId) {
     const count = await mongoose.model("Order").countDocuments();
     this.orderId = `ORD-${1000 + count + 1}`; // e.g. ORD-1001, ORD-1002
   }
-  next();
 });
 
 const Order = mongoose.model("Order", orderSchema);

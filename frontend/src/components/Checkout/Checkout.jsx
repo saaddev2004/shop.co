@@ -130,7 +130,7 @@ const Checkout = () => {
   const deliveryFee = 15;
   const total = subtotal - discount + deliveryFee;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (items.length === 0) return;
 
@@ -140,16 +140,32 @@ const Checkout = () => {
       customer: formData.name,
       email: formData.email,
       phone: formData.phone,
-      address: `${formData.address}, ${formData.city}`,
+      address: formData.address,
+      city: formData.city,
       paymentMethod: formData.paymentMethod,
-      cart: items,
+      items: items.map(item => ({
+        productId: item.id || item._id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        selectedSize: item.selectedSize,
+        selectedColor: item.selectedColor,
+        image: item.image || "",
+      })),
+      subtotal: subtotal,
+      discount: discount,
+      deliveryFee: deliveryFee,
       total: total,
     };
 
-    const newOrder = addOrder(orderData);
-    setPlacedOrderDetails(newOrder);
-    setOrderPlaced(true);
-    clearCart();
+    const res = await addOrder(orderData);
+    if (res && res.success) {
+      setPlacedOrderDetails(res.order);
+      setOrderPlaced(true);
+      clearCart();
+    } else {
+      alert(res?.message || "Failed to place order. Please try again.");
+    }
   };
 
   if (orderPlaced) {

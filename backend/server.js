@@ -15,8 +15,8 @@ connectDB();
 const app = express();
 
 // ── Middleware ─────────────────────────────────────────────
-app.use(express.json());          // Parse incoming JSON body
-app.use(express.urlencoded({ extended: true })); // Parse form data
+app.use(express.json({ limit: "50mb" }));          // Parse incoming JSON body
+app.use(express.urlencoded({ limit: "50mb", extended: true })); // Parse form data
 app.use(cookieParser());          // Parse cookies
 
 // CORS — allow requests from the React frontend

@@ -1,60 +1,110 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { productsData as initialProducts } from "../data/products";
+import api from "../utils/api";
 
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
-  const [products, setProducts] = useState(() => {
-    const savedProducts = localStorage.getItem("shop_products");
-    return savedProducts ? JSON.parse(savedProducts) : initialProducts;
-  });
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch all products on initial load
   useEffect(() => {
-    localStorage.setItem("shop_products", JSON.stringify(products));
-  }, [products]);
-
-  const addProduct = (newProduct) => {
-    const id = Date.now();
-    const productWithId = {
-      ...newProduct,
-      id: id,
-      rating: 4.5,
-      link: `/product/${id}`,
-      colorStock: newProduct.colorStock || {},
-      isOnSale: newProduct.isOnSale || false
-    };
-    setProducts((prev) => [productWithId, ...prev]);
-  };
-
-  const deleteProduct = (id) => {
-    setProducts((prev) => prev.filter(p => p.id !== id));
-  };
-
-  const updateProduct = (id, updatedData) => {
-    setProducts((prev) => prev.map(p => {
-        if (p.id === id) {
-            const price = parseFloat(updatedData.price);
-            const oldPrice = updatedData.oldPrice ? parseFloat(updatedData.oldPrice) : null;
-            const discount = (oldPrice && oldPrice > price)
-                ? `-${Math.round((1 - price / oldPrice) * 100)}%` 
-                : null;
-            
-            return { 
-                ...p, 
-                ...updatedData, 
-                id, // Ensure ID remains same
-                price, 
-                oldPrice, 
-                discount,
-                link: `/product/${id}`
-            };
+    const fetchProducts = async () => {
+      try {
+        const { data } = await api.get("/products");
+        // The backend returns an array directly
+        if (Array.isArray(data)) {
+          const formattedProducts = data.map(p => ({
+            ...p,
+            id: p._id, // map _id to id for frontend consistency
+            link: `/product/${p._id}`
+          }));
+          setProducts(formattedProducts);
         }
-        return p;
-    }));
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const addProduct = async (newProduct) => {
+    try {
+      const { data } = await api.post("/products", newProduct);
+      // The backend returns the created product object directly
+      if (data && data._id) {
+        const addedProduct = {
+          ...data,
+          id: data._id,
+          link: `/product/${data._id}`
+        };
+        setProducts((prev) => [addedProduct, ...prev]);
+        return { success: true };
+      }
+      return { success: false, message: "Unexpected response from server" };
+    } catch (error) {
+      console.error("Add product failed:", error);
+      const backendMessage = error.response?.data?.message;
+      const backendError = error.response?.data?.error;
+      const fullError = backendError ? `${backendMessage}: ${backendError}` : (backendMessage || "Error adding product");
+      return { success: false, message: fullError };
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    try {
+      const { data } = await api.delete(`/products/${id}`);
+      // Backend returns { message: "Product deleted successfully" }
+      if (data && data.message) {
+        setProducts((prev) => prev.filter((p) => p.id !== id && p._id !== id));
+        return { success: true };
+      }
+      return { success: false };
+    } catch (error) {
+      console.error("Delete product failed:", error);
+      return { success: false };
+    }
+  };
+
+  const updateProduct = async (id, updatedData) => {
+    try {
+      const { data } = await api.put(`/products/${id}`, updatedData);
+      // Backend returns the updated product directly
+      if (data && data._id) {
+        setProducts((prev) => 
+          prev.map((p) => {
+            if (p.id === id || p._id === id) {
+              return { 
+                ...p, 
+                ...data, 
+                id: data._id, 
+                link: `/product/${data._id}` 
+              };
+            }
+            return p;
+          })
+        );
+        return { success: true };
+      }
+      return { success: false };
+    } catch (error) {
+      console.error("Update product failed:", error);
+      return { success: false };
+    }
   };
 
   return (
-    <ProductContext.Provider value={{ products, addProduct, deleteProduct, updateProduct }}>
+    <ProductContext.Provider 
+      value={{ 
+        products, 
+        loading, 
+        addProduct, 
+        deleteProduct, 
+        updateProduct 
+      }}
+    >
       {children}
     </ProductContext.Provider>
   );

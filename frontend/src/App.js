@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import HeroPage from './pages/HomePage/HomePage';
 import Checkout from './components/Checkout/Checkout';
@@ -22,35 +22,56 @@ import { SettingsProvider } from "./Context/SettingsContext";
 import { OrderProvider } from "./Context/OrderContext";
 import { UserProvider } from "./Context/UserContext";
 
+const MainLayout = () => {
+  return (
+    <>
+      <Header />
+      <Outlet /> 
+      <Newsletter />
+      <Footer />
+    </>
+  );
+};
+
 function App() {
   return (
     <SettingsProvider>
       <UserProvider>
         <AuthProvider>
           <ProductProvider>
-          <OrderProvider>
-            <CartProvider>
-              <Router>
-            <ScrollToTop />
-            <Header />
-            <Routes>
-              <Route path="/" element={<HeroPage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/product/:id" element={<DynamicProductPage />} />
-              <Route path="/add-to-cart-page" element={<CartPage />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/admin/login" element={<AdminLoginPage />} />
-              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-            <Newsletter />
-            <Footer />
-              </Router>
-            </CartProvider>
-          </OrderProvider>
-        </ProductProvider>
+            <OrderProvider>
+              <CartProvider>
+                <Router>
+                  <ScrollToTop />
+                  <Routes>
+                    
+                    {/* Normal Pages with Header/Footer */}
+                    <Route element={<MainLayout />}>
+                      <Route path="/" element={<HeroPage />} />
+                      <Route path="/shop" element={<ShopPage />} />
+                      <Route path="/product/:id" element={<DynamicProductPage />} />
+                      <Route path="/add-to-cart-page" element={<CartPage />} />
+                      <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/auth" element={<AuthPage />} />
+                      <Route path="/profile" element={<UserProfile />} />
+                    </Route>
+
+                    {/* Admin Pages without Header/Footer */}
+                    <Route path="/admin/login" element={<AdminLoginPage />} />
+                    <Route path="/admin" element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    } />
+                    
+                    {/* Catch-all route */}
+                    <Route path="*" element={<Navigate to="/" />} />
+                    
+                  </Routes>
+                </Router>
+              </CartProvider>
+            </OrderProvider>
+          </ProductProvider>
         </AuthProvider>
       </UserProvider>
     </SettingsProvider>
