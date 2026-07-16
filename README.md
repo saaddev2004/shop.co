@@ -316,7 +316,7 @@ shop.co/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/shop.co.git
+git clone https://github.com/saaddev2004/shop.co
 cd shop.co
 ```
 
@@ -398,8 +398,7 @@ NODE_ENV=development
 
 # MongoDB — Local (MongoDB Compass)
 MONGO_URI=mongodb://localhost:27017/shopco_db
-# MongoDB — Cloud (Atlas) — uncomment if deploying
-# MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/shopco_db
+
 
 # JWT
 JWT_SECRET=your_super_secret_key_minimum_32_characters_long
@@ -942,9 +941,9 @@ This project is licensed under the **ISC License** (as declared in `backend/pack
 **Saad**
 Final-Year Software Engineering Student
 
-- 💻 GitHub: [Add your GitHub profile link]
-- 💼 LinkedIn: [Add your LinkedIn profile link]
-- 📧 Email: [Add your contact email]
+- 💻 GitHub: https://github.com/saaddev2004
+- 💼 LinkedIn: https://www.linkedin.com/in/m-saad-dev/
+- 📧 Email: m.saad.dev1@gmail.com
 
 ---
 
@@ -963,8 +962,8 @@ Final-Year Software Engineering Student
 
 Questions, feedback, or collaboration ideas? Reach out:
 
-- 📧 **Email:** [your.email@example.com](mailto:your.email@example.com)
-- 💼 **LinkedIn:** [your-linkedin-handle](https://linkedin.com/in/your-handle)
+- 📧 **Email:** m.saad.dev1@gmail.com
+- 💼 **LinkedIn:** https://www.linkedin.com/in/m-saad-dev/
 
 ---
 
@@ -974,7 +973,7 @@ If you found this project useful or interesting, please consider giving it a ⭐
 
 ```bash
 # One more reason to smile today 🙂
-git clone https://github.com/<your-username>/shop.co.git
+git clone https://github.com/saaddev2004/shop.co
 ```
 
 ---
