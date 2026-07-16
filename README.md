@@ -128,15 +128,8 @@ The project is structured as a **monorepo** with an independent `frontend/` (Rea
 
 ---
 
-## 🎬 Demo
 
-🔗 **Live Demo:** _Not deployed yet — add your production URL here (e.g. Vercel/Render link)._
 
-```
-https://your-live-demo-url.example.com
-```
-
----
 
 ## 🧰 Tech Stack
 
