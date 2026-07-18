@@ -108,7 +108,8 @@ const ProductDetails = ({ productData }) => {
             <img 
               src={activeImage} 
               alt={name} 
-              loading="lazy" // Lazy Load for main image
+              loading="eager" // <-- Isko sab se pehle load karo
+              fetchPriority="high" // <-- Browser ko batao yeh VIP hai
               onLoad={() => setIsMainImageLoaded(true)}
               className={`w-full h-full object-cover transition-opacity duration-500 ${isMainImageLoaded ? 'opacity-100' : 'opacity-0'}`} 
             />
