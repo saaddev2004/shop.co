@@ -8,16 +8,28 @@ const AdminLoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  // Nayi State: Button Loading ke liye
+  const [isSubmitting, setIsSubmitting] = useState(false); 
+  
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await login(email, password);
-    if (res && res.success) {
-      navigate("/admin");
-    } else {
-      setError(res?.message || "Invalid administrative credentials");
+    setError(""); // Puraani error clear karein
+    setIsSubmitting(true); // Loading start! Button disable ho jayega aur spinner aayega
+
+    try {
+      const res = await login(email, password);
+      if (res && res.success) {
+        navigate("/admin");
+      } else {
+        setError(res?.message || "Invalid administrative credentials");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false); // API response aane ke baad (success ho ya fail), loading khatam!
     }
   };
 
@@ -59,6 +71,7 @@ const AdminLoginPage = () => {
                   placeholder="admin@shop.co"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting} // Jab API call ho rahi ho to input block kar dein
                 />
               </div>
             </div>
@@ -74,6 +87,7 @@ const AdminLoginPage = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isSubmitting} // Jab API call ho rahi ho to input block kar dein
                 />
               </div>
             </div>
@@ -90,9 +104,20 @@ const AdminLoginPage = () => {
 
             <button 
               type="submit" 
-              className="group w-full bg-black dark:bg-white text-white dark:text-black font-bold py-5 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3 mt-8"
+              disabled={isSubmitting} // Button block takay multiple clicks na hon
+              className={`group w-full bg-black dark:bg-white text-white dark:text-black font-bold py-5 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 mt-8 ${
+                isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02] active:scale-95"
+              }`}
             >
-              Secure Sign In <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+              {isSubmitting ? (
+                // Jab loading ho, to yeh spinner dikhayega
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white dark:border-black"></div>
+              ) : (
+                // Normal state mein text aur icon
+                <>
+                  Secure Sign In <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </form>
         </div>
