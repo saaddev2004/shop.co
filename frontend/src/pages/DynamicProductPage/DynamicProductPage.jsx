@@ -21,10 +21,11 @@ const DynamicProductPage = () => {
 
   return (
     <div>
-      <ProductDetails productData={product} />
+      <ProductDetails key={id} productData={product} />
       <SimilarProducts />
     </div>
   );
 };
 
 export default DynamicProductPage;
+
