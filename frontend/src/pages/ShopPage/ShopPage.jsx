@@ -7,7 +7,7 @@ import ShopGrid from "./components/ShopGrid";
 
 const ShopPage = () => {
   const location = useLocation();
-  const { products } = useProducts();
+  const { products, loading } = useProducts(); // <-- Added loading here
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showOnlySale, setShowOnlySale] = useState(false);
@@ -27,9 +27,21 @@ const ShopPage = () => {
     }
   }, [location.state]);
 
-  const filteredProducts = products.filter(p => {
-    const matchesCategory = activeCategory === "All" || p.category === activeCategory;
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+  // Agar data fetch ho raha hai, toh spinner dikhao
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-black dark:border-white border-b-transparent"></div>
+      </div>
+    );
+  }
+
+  const filteredProducts = products.filter((p) => {
+    const matchesCategory =
+      activeCategory === "All" || p.category === activeCategory;
+    const matchesSearch = p.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     const matchesSale = !showOnlySale || p.isOnSale;
     return matchesCategory && matchesSearch && matchesSale;
   });
@@ -38,7 +50,12 @@ const ShopPage = () => {
     <div className="container mx-auto px-4 py-8 md:py-12 transition-colors duration-500">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm mb-8">
-        <Link to="/" className="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">Home</Link>
+        <Link
+          to="/"
+          className="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors"
+        >
+          Home
+        </Link>
         <span className="text-black/60 dark:text-white/60">/</span>
         <span className="font-bold dark:text-white">Shop</span>
       </nav>
@@ -61,7 +78,7 @@ const ShopPage = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <ShopFilters 
+        <ShopFilters
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
           showOnlySale={showOnlySale}
