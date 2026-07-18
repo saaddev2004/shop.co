@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import imageCompression from "browser-image-compression";
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiArrowLeft, FiPlus, FiX, FiUpload, FiSave, FiArrowRight, FiMinus, FiMaximize } from "react-icons/fi";
@@ -29,6 +29,8 @@ const EditorTab = ({
     handleSubmit
 }) => {
     const fileInputRef = useRef(null);
+    // Nayi State: Form submit hote waqt loading dikhane ke liye
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const onCropComplete = (_area, areaPixels) => {
         setCroppedAreaPixels(areaPixels);
@@ -121,6 +123,17 @@ const EditorTab = ({
         }));
     };
 
+    // Wrapper function jo button click hote hi loading ON karega
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            await handleSubmit(e); // Asal parent wali API call
+        } finally {
+            setIsSubmitting(false); // API response aane par button wapas normal
+        }
+    };
+
     return (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
             <div className="flex items-center justify-between">
@@ -142,7 +155,8 @@ const EditorTab = ({
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-start">
+            {/* Yahan form onSubmit mein naya handleFormSubmit lagaya hai */}
+            <form onSubmit={handleFormSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-start">
                 {/* Form Left (Identity & Specs) */}
                 <div className="lg:col-span-7 space-y-8">
                     <div className="bg-white dark:bg-neutral-900 p-5 sm:p-8 md:p-10 rounded-2xl sm:rounded-[35px] border border-black/[0.04] dark:border-white/[0.04] shadow-sm space-y-8">
@@ -362,10 +376,21 @@ const EditorTab = ({
 
                     <button
                         type="submit"
-                        className="w-full bg-black dark:bg-white text-white dark:text-black font-black py-5 rounded-[22px] text-base shadow-xl hover:scale-[1.01] transition-all flex items-center justify-center gap-3"
+                        disabled={isSubmitting} // Disable when loading
+                        className={`w-full bg-black dark:bg-white text-white dark:text-black font-black py-5 rounded-[22px] text-base shadow-xl transition-all flex items-center justify-center gap-3 ${
+                            isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.01]"
+                        }`}
                     >
-                        {editingProductId ? <FiSave size={18} /> : <FiArrowRight size={18} />}
-                        {editingProductId ? "Commit Configuration" : "Deploy Product Asset"}
+                        {isSubmitting ? (
+                            // Spinner dikhao jab submit ho raha ho
+                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white dark:border-black"></div>
+                        ) : (
+                            // Normal icon aur text
+                            <>
+                                {editingProductId ? <FiSave size={18} /> : <FiArrowRight size={18} />}
+                                {editingProductId ? "Commit Configuration" : "Deploy Product Asset"}
+                            </>
+                        )}
                     </button>
                 </div>
             </form>
