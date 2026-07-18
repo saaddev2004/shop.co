@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { CartContext } from "../../Context/CartContext";
 import { FaCheck, FaPlus, FaMinus } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
@@ -14,10 +14,16 @@ const ProductDetails = ({ productData }) => {
 
   const [selectedColor, setSelectedColor] = useState(dynamicColors?.[0] || "");
   const [activeImage, setActiveImage] = useState(image);
+  const [isMainImageLoaded, setIsMainImageLoaded] = useState(false); // Fade-in ke liye
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [openAccordion, setOpenAccordion] = useState("details"); // details, shipping, reviews
   const { addToCart } = useContext(CartContext);
+
+  // Jab bhi active image change ho, loading state ko false kar do taake naya fade-in aaye
+  useEffect(() => {
+    setIsMainImageLoaded(false);
+  }, [activeImage]);
 
   const defaultColors = [
     { name: "Black", hex: "#000000" },
@@ -102,7 +108,9 @@ const ProductDetails = ({ productData }) => {
             <img 
               src={activeImage} 
               alt={name} 
-              className="w-full h-full object-cover transition-transform duration-500" 
+              loading="lazy" // Lazy Load for main image
+              onLoad={() => setIsMainImageLoaded(true)}
+              className={`w-full h-full object-cover transition-opacity duration-500 ${isMainImageLoaded ? 'opacity-100' : 'opacity-0'}`} 
             />
             {productData.isOnSale && (
               <span className="absolute top-6 left-6 bg-red-500 text-white px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase shadow-lg shadow-red-500/30">
@@ -114,7 +122,7 @@ const ProductDetails = ({ productData }) => {
             <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto no-scrollbar">
               {displayThumbnails.map((img, idx) => (
                 <button key={idx} onClick={() => setActiveImage(img.url)} className={`w-20 md:w-24 aspect-square rounded-xl overflow-hidden bg-[#F0EEED] dark:bg-neutral-800 border-2 transition-all ${activeImage === img.url ? "border-black dark:border-white" : "border-transparent"}`}>
-                  <img src={img.url} alt="" className="w-full h-full object-cover" />
+                  <img src={img.url} alt="" loading="lazy" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
