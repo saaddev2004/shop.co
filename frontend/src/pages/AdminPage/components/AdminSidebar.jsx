@@ -3,7 +3,7 @@ import { FiGrid, FiBox, FiPlus, FiShoppingBag, FiTrendingUp, FiSettings, FiLogOu
 
 const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, activeTab, setActiveTab, resetForm, logout, settings, orders }) => {
     return (
-        <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-50 w-72 bg-white dark:bg-neutral-900 border-r border-black/[0.05] dark:border-white/[0.05] flex flex-col justify-between h-screen`}>
+        <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:sticky lg:top-0 lg:translate-x-0 transition-transform duration-300 ease-in-out z-50 w-72 bg-white dark:bg-neutral-900 border-r border-black/[0.05] dark:border-white/[0.05] flex flex-col justify-between h-screen`}>
             <div>
                 <div className="p-8 border-b border-black/[0.05] dark:border-white/[0.05] flex items-center justify-between">
                     <div className="flex items-center gap-3 w-full">
