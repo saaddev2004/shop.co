@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const ProductCard = ({ item }) => {
+  // Nayi State: Image load hone ka status track karne ke liye
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     <div className="group h-full flex flex-col max-w-[260px] mx-auto w-full">
       <Link to={item.link} className="aspect-[3/4] rounded-[15px] overflow-hidden bg-[#F0EEED] dark:bg-neutral-800 flex items-center justify-center mb-3 transition-all group-hover:shadow-md relative">
         <img
           src={item.image}
           alt={item.name}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy" // <-- Yeh attribute browser ko batata hai ke image tabhi load karo jab wo screen par aaye
+          onLoad={() => setIsLoaded(true)} // <-- Jab image load ho jaye tab state true kar do
+          className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${
+            isLoaded ? "opacity-100" : "opacity-0"
+          }`} // <-- Fade-in effect ke liye opacity classes
         />
         {item.discount && (
           <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-sm z-10 uppercase tracking-tighter">
