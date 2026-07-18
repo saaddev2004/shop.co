@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import imageCompression from "browser-image-compression";
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiArrowLeft, FiPlus, FiX, FiUpload, FiSave, FiArrowRight, FiMinus, FiMaximize } from "react-icons/fi";
 import Cropper from "react-easy-crop";
@@ -33,16 +34,27 @@ const EditorTab = ({
         setCroppedAreaPixels(areaPixels);
     };
 
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    setImages(prev => [...prev, { url: reader.result, color: formData.colors[0] || null }]);
-                };
-                reader.readAsDataURL(file);
-            });
+            const compressionOptions = {
+                maxSizeMB: 0.3,          // Compress to ~300KB max
+                maxWidthOrHeight: 1200,  // Resize if larger than 1200px
+                useWebWorker: true,
+            };
+    
+            for (const file of files) {
+                try {
+                    const compressedFile = await imageCompression(file, compressionOptions);
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        setImages(prev => [...prev, { url: reader.result, color: formData.colors[0] || null }]);
+                    };
+                    reader.readAsDataURL(compressedFile);
+                } catch (error) {
+                    console.error("Image compression failed:", error);
+                }
+            }
         }
         e.target.value = null;
     };
