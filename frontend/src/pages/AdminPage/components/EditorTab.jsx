@@ -29,8 +29,9 @@ const EditorTab = ({
     handleSubmit
 }) => {
     const fileInputRef = useRef(null);
-    // Nayi State: Form submit hote waqt loading dikhane ke liye
     const [isSubmitting, setIsSubmitting] = useState(false);
+    // Nayi State: Image compression ke doran loading dikhane ke liye
+    const [isCompressing, setIsCompressing] = useState(false); 
 
     const onCropComplete = (_area, areaPixels) => {
         setCroppedAreaPixels(areaPixels);
@@ -39,6 +40,8 @@ const EditorTab = ({
     const handleImageUpload = async (e) => {
         const files = Array.from(e.target.files);
         if (files.length > 0) {
+            setIsCompressing(true); // Image process hona shuru -> Loading ON
+            
             const compressionOptions = {
                 maxSizeMB: 0.3,
                 maxWidthOrHeight: 1200,
@@ -59,6 +62,8 @@ const EditorTab = ({
                     console.error("Image compression failed:", error);
                 }
             }
+            
+            setIsCompressing(false); // Process complete -> Loading OFF
         }
         e.target.value = null;
     };
@@ -123,14 +128,13 @@ const EditorTab = ({
         }));
     };
 
-    // Wrapper function jo button click hote hi loading ON karega
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await handleSubmit(e); // Asal parent wali API call
+            await handleSubmit(e);
         } finally {
-            setIsSubmitting(false); // API response aane par button wapas normal
+            setIsSubmitting(false);
         }
     };
 
@@ -155,7 +159,6 @@ const EditorTab = ({
                 </div>
             </div>
 
-            {/* Yahan form onSubmit mein naya handleFormSubmit lagaya hai */}
             <form onSubmit={handleFormSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-start">
                 {/* Form Left (Identity & Specs) */}
                 <div className="lg:col-span-7 space-y-8">
@@ -327,17 +330,29 @@ const EditorTab = ({
                             <span className="w-1.5 h-5 bg-black dark:bg-white rounded-full" /> Media Assets
                         </h4>
 
+                        {/* Updated Image Upload Box with Loading State */}
                         <div
-                            onClick={() => fileInputRef.current?.click()}
-                            className="group border-2 border-dashed border-black/10 dark:border-white/10 rounded-2xl p-10 flex flex-col items-center justify-center cursor-pointer hover:bg-black/[0.01] transition-all relative"
+                            onClick={() => !isCompressing && fileInputRef.current?.click()}
+                            className={`group border-2 border-dashed border-black/10 dark:border-white/10 rounded-2xl p-10 flex flex-col items-center justify-center transition-all relative ${isCompressing ? 'cursor-not-allowed opacity-70 bg-black/[0.02]' : 'cursor-pointer hover:bg-black/[0.01]'}`}
                         >
-                            <FiUpload size={32} className="text-black/20 dark:text-white/20 mb-4 group-hover:-translate-y-0.5 transition-transform" />
-                            <span className="font-bold text-xs dark:text-white text-center">Import Image File</span>
-                            <span className="text-[10px] text-black/30 dark:text-white/30 text-center mt-1">Accepts high-res media aspect ratio [3:4]</span>
+                            {isCompressing ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black dark:border-white mb-4"></div>
+                                    <span className="font-bold text-xs dark:text-white text-center">Optimizing Image...</span>
+                                    <span className="text-[10px] text-black/30 dark:text-white/30 text-center mt-1">Please wait while we compress</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FiUpload size={32} className="text-black/20 dark:text-white/20 mb-4 group-hover:-translate-y-0.5 transition-transform" />
+                                    <span className="font-bold text-xs dark:text-white text-center">Import Image File</span>
+                                    <span className="text-[10px] text-black/30 dark:text-white/30 text-center mt-1">Accepts high-res media aspect ratio [3:4]</span>
+                                </>
+                            )}
                             <input
                                 ref={fileInputRef}
                                 type="file"
                                 multiple
+                                disabled={isCompressing}
                                 className="hidden"
                                 onChange={handleImageUpload}
                                 accept="image/*"
@@ -376,16 +391,14 @@ const EditorTab = ({
 
                     <button
                         type="submit"
-                        disabled={isSubmitting} // Disable when loading
+                        disabled={isSubmitting || isCompressing} 
                         className={`w-full bg-black dark:bg-white text-white dark:text-black font-black py-5 rounded-[22px] text-base shadow-xl transition-all flex items-center justify-center gap-3 ${
-                            isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.01]"
+                            isSubmitting || isCompressing ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.01]"
                         }`}
                     >
                         {isSubmitting ? (
-                            // Spinner dikhao jab submit ho raha ho
                             <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white dark:border-black"></div>
                         ) : (
-                            // Normal icon aur text
                             <>
                                 {editingProductId ? <FiSave size={18} /> : <FiArrowRight size={18} />}
                                 {editingProductId ? "Commit Configuration" : "Deploy Product Asset"}
