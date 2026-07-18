@@ -99,6 +99,8 @@ const logoutUser = (req, res) => {
   // Clear the cookie by setting it to an empty string and expiring it immediately
   res.cookie("token", "", {
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     expires: new Date(0),
   });
 
