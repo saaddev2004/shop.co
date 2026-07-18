@@ -38,14 +38,16 @@ const EditorTab = ({
         const files = Array.from(e.target.files);
         if (files.length > 0) {
             const compressionOptions = {
-                maxSizeMB: 0.3,          // Compress to ~300KB max
-                maxWidthOrHeight: 1200,  // Resize if larger than 1200px
+                maxSizeMB: 0.3,
+                maxWidthOrHeight: 1200,
                 useWebWorker: true,
             };
     
             for (const file of files) {
                 try {
+                    console.log("Original size (MB):", (file.size / 1024 / 1024).toFixed(2));
                     const compressedFile = await imageCompression(file, compressionOptions);
+                    console.log("Compressed size (MB):", (compressedFile.size / 1024 / 1024).toFixed(2));
                     const reader = new FileReader();
                     reader.onload = () => {
                         setImages(prev => [...prev, { url: reader.result, color: formData.colors[0] || null }]);
