@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useProducts } from "../../Context/ProductContext";
 import { useAuth } from "../../Context/AuthContext";
 import { useOrders } from "../../Context/OrderContext";
@@ -26,20 +26,29 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState("overview");
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
     const [editingProductId, setEditingProductId] = useState(null);
-    const [isDarkMode, setIsDarkMode] = useState(
-        document.documentElement.classList.contains("dark")
-    );
+    
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const toggleTheme = () => {
+    // 1. Initial load par browser se theme check karo
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        return localStorage.getItem("theme") === "dark";
+    });
+
+    // 2. Theme change hone par HTML class update karo aur save karo
+    useEffect(() => {
         const root = document.documentElement;
-        if (root.classList.contains("dark")) {
-            root.classList.remove("dark");
-            setIsDarkMode(false);
-        } else {
+        if (isDarkMode) {
             root.classList.add("dark");
-            setIsDarkMode(true);
+            localStorage.setItem("theme", "dark");
+        } else {
+            root.classList.remove("dark");
+            localStorage.setItem("theme", "light");
         }
+    }, [isDarkMode]);
+
+    // 3. Toggle button sirf state change karega
+    const toggleTheme = () => {
+        setIsDarkMode((prev) => !prev);
     };
 
     const [formData, setFormData] = useState({
