@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api",
-  withCredentials: true, // This ensures cookies (JWT) are sent with every request
+  baseURL: "http://localhost:5000/api", // <-- Dekh, yahan humne backend ka direct link de diya hai!
+  withCredentials: true,
 });
 
 export default api;

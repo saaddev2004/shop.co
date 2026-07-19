@@ -1,4 +1,5 @@
 const Product = require("../models/Product.model");
+const { cloudinary } = require("../config/cloudinary"); // <-- Cloudinary connection import kiya
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -58,36 +59,34 @@ const getOnSaleProducts = async (req, res) => {
 // @access  Private/Admin
 const createProduct = async (req, res) => {
   try {
-    const {
-      name,
-      description,
-      price,
-      oldPrice,
-      discount,
-      category,
-      image,
-      allImages,
-      sizes,
-      colors,
-      colorStock,
-      isOnSale,
-      isNewArrival,
+    let {
+      name, description, price, oldPrice, discount, category,
+      image, allImages, sizes, colors, colorStock, isOnSale, isNewArrival,
     } = req.body;
 
+    // ✨ MAGIC: Agar main image heavy Base64 format mein hai, toh Cloudinary par bhej do
+    if (image && image.startsWith("data:image")) {
+      const uploadRes = await cloudinary.uploader.upload(image, { folder: "shopco_products" });
+      image = uploadRes.secure_url; // Heavy string ki jagah chota fast URL aa gaya
+    }
+
+    // ✨ MAGIC: Agar multiple thumbnails hain, toh unko bhi Cloudinary par upload karo
+    if (allImages && allImages.length > 0) {
+      allImages = await Promise.all(
+        allImages.map(async (img) => {
+          let imgData = typeof img === 'string' ? img : img.url;
+          if (imgData && imgData.startsWith("data:image")) {
+            const res = await cloudinary.uploader.upload(imgData, { folder: "shopco_products" });
+            return typeof img === 'string' ? res.secure_url : { ...img, url: res.secure_url };
+          }
+          return img;
+        })
+      );
+    }
+
     const product = new Product({
-      name,
-      description,
-      price,
-      oldPrice,
-      discount,
-      category,
-      image,
-      allImages,
-      sizes,
-      colors,
-      colorStock,
-      isOnSale,
-      isNewArrival,
+      name, description, price, oldPrice, discount, category,
+      image, allImages, sizes, colors, colorStock, isOnSale, isNewArrival,
       createdBy: req.user._id, // ID of the admin making the request
     });
 
@@ -106,15 +105,37 @@ const updateProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-      // Update only the fields provided in the request body, keep existing values otherwise
+      let newImage = req.body.image;
+      // ✨ MAGIC: Agar update mein nayi image aayi hai
+      if (newImage && newImage.startsWith("data:image")) {
+        const uploadRes = await cloudinary.uploader.upload(newImage, { folder: "shopco_products" });
+        newImage = uploadRes.secure_url;
+      }
+
+      let newAllImages = req.body.allImages;
+      // ✨ MAGIC: Agar update mein nayi thumbnails aayi hain
+      if (newAllImages && newAllImages.length > 0) {
+        newAllImages = await Promise.all(
+          newAllImages.map(async (img) => {
+            let imgData = typeof img === 'string' ? img : img.url;
+            if (imgData && imgData.startsWith("data:image")) {
+              const res = await cloudinary.uploader.upload(imgData, { folder: "shopco_products" });
+              return typeof img === 'string' ? res.secure_url : { ...img, url: res.secure_url };
+            }
+            return img;
+          })
+        );
+      }
+
+      // Update only the fields provided
       product.name = req.body.name || product.name;
       product.description = req.body.description || product.description;
       product.price = req.body.price || product.price;
       product.oldPrice = req.body.oldPrice !== undefined ? req.body.oldPrice : product.oldPrice;
       product.discount = req.body.discount !== undefined ? req.body.discount : product.discount;
       product.category = req.body.category || product.category;
-      product.image = req.body.image || product.image;
-      product.allImages = req.body.allImages || product.allImages;
+      product.image = newImage || product.image; // Cloudinary URL
+      product.allImages = newAllImages || product.allImages; // Cloudinary URLs
       product.sizes = req.body.sizes || product.sizes;
       product.colors = req.body.colors || product.colors;
       product.colorStock = req.body.colorStock || product.colorStock;
