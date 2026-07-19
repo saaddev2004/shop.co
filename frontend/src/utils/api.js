@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // <-- Dekh, yahan humne backend ka direct link de diya hai!
+  baseURL: "https://shopco-production-2bab.up.railway.app/api", // <-- Railway ka live link lag gaya!
   withCredentials: true,
 });
 
