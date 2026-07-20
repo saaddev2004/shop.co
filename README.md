@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛍️ SHOP.CO
+# 🛍️ SHOP.CO 
 
 ### A Full-Stack MERN E-Commerce Platform
 
